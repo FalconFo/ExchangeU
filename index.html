@@ -997,6 +997,82 @@
             </div>
             );
           };
+          
+          const CreditsMarketplacePage = () => (
+            <div className="pt-24 pb-12 px-4 animate-fade-in min-h-screen bg-gray-50 dark:bg-slate-900">
+                <Section>
+                {/* Hero */}
+                <div className="text-center mb-12">
+                    <Badge color="green">Marketplace</Badge>
+                    <h1 className="mt-4 text-4xl font-bold text-gray-900 dark:text-white">Buy & Sell Credits</h1>
+                    <p className="text-xl text-gray-600 dark:text-gray-400 mt-4 max-w-2xl mx-auto">
+                    1 CR = 1 USD. Users can list their credits for sale, and buyers can purchase them securely.
+                    </p>
+                    
+                    <div className="mt-8 flex justify-center gap-4">
+                    <Button variant="success" icon={CreditCard}>Browse Offers</Button>
+                    <div className="bg-white dark:bg-slate-800 px-6 py-3 rounded-xl shadow-md border border-gray-100 dark:border-slate-700 flex items-center gap-2">
+                        <span className="text-gray-500 text-sm">Your Balance:</span>
+                        <span className="font-bold text-gray-900 dark:text-white text-lg">{user.credits.toFixed(1)} CR</span>
+                    </div>
+                    </div>
+                </div>
+
+                {/* How it works */}
+                <div className="grid md:grid-cols-3 gap-6 mb-16">
+                    {[
+                    { title: "1. Choose an Offer", desc: "Find a seller with the amount you need." },
+                    { title: "2. Confirm Payment", desc: "Pay securely via their preferred method." },
+                    { title: "3. Receive Credits", desc: "Credits are transferred instantly to your wallet." }
+                    ].map((step, i) => (
+                    <Card key={i} className="text-center p-6">
+                        <div className="w-10 h-10 bg-green-100 text-green-600 rounded-full flex items-center justify-center mx-auto mb-4 font-bold">{i+1}</div>
+                        <h3 className="font-bold text-gray-900 dark:text-white">{step.title}</h3>
+                        <p className="text-sm text-gray-500 mt-1">{step.desc}</p>
+                    </Card>
+                    ))}
+                </div>
+
+                {/* Offers List */}
+                <h2 className="text-2xl font-bold text-gray-900 dark:text-white mb-6">Active Offers</h2>
+                <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
+                    {[
+                    { seller: "AlexTrader", amount: 250, method: "PayPal" },
+                    { seller: "LearnFast_01", amount: 50, method: "Stripe" },
+                    { seller: "ProTutor_Mike", amount: 100, method: "Venmo" },
+                    { seller: "Sarah_Designs", amount: 500, method: "Bank Transfer" },
+                    { seller: "CodeNinja", amount: 1000, method: "Crypto (USDC)" },
+                    { seller: "EduFund_DAO", amount: 25, method: "Wise" },
+                    ].map((offer, i) => (
+                    <Card key={i} className="flex flex-col justify-between">
+                        <div className="flex justify-between items-start mb-4">
+                            <div className="flex items-center gap-3">
+                            <div className="w-10 h-10 bg-gray-200 rounded-full flex items-center justify-center text-gray-500 font-bold">{offer.seller[0]}</div>
+                            <div>
+                                <h4 className="font-bold text-gray-900 dark:text-white">{offer.seller}</h4>
+                                <p className="text-xs text-gray-500">Verified Seller</p>
+                            </div>
+                            </div>
+                            <Badge color="green">SELL</Badge>
+                        </div>
+                        
+                        <div className="bg-gray-50 dark:bg-slate-700/50 p-4 rounded-xl mb-4 text-center">
+                            <div className="text-3xl font-black text-gray-900 dark:text-white">{offer.amount} CR</div>
+                            <div className="text-sm text-gray-500">= ${offer.amount.toFixed(2)} USD</div>
+                        </div>
+                        
+                        <div className="flex justify-between items-center text-sm text-gray-500 mb-6">
+                            <span>Method:</span>
+                            <span className="font-bold text-gray-900 dark:text-white">{offer.method}</span>
+                        </div>
+                        
+                        <Button variant="primary" className="w-full">Buy Now</Button>
+                    </Card>
+                    ))}
+                </div>
+                </Section>
+            </div>
+            );
 
           const WalletPage = () => (
             <div className="pt-24 pb-12 px-4 animate-fade-in min-h-screen bg-gray-50 dark:bg-slate-900">
@@ -1729,6 +1805,7 @@
                       <div className="hidden md:flex items-center gap-8">
                         <button onClick={() => navigate('how-to-learn')} className="text-sm font-medium hover:text-purple-600 transition-colors text-gray-600 dark:text-gray-300">Start Learning</button>
                         <button onClick={() => navigate('learn')} className="text-sm font-medium hover:text-purple-600 transition-colors text-gray-600 dark:text-gray-300">Teachers</button>
+                        <button onClick={() => navigate('credits')} className="text-sm font-medium hover:text-purple-600 transition-colors text-gray-600 dark:text-gray-300">Credits</button>
                         <button onClick={() => navigate('live-lounge')} className="text-sm font-medium hover:text-red-500 transition-colors text-gray-600 dark:text-gray-300 flex items-center gap-1"><div className="w-2 h-2 bg-red-500 rounded-full animate-pulse"></div> Live</button>
                         <button onClick={() => navigate('bounties')} className="text-sm font-medium hover:text-purple-600 transition-colors text-gray-600 dark:text-gray-300">Requests</button>
                         <button onClick={() => navigate('loop')} className="text-sm font-medium hover:text-purple-600 transition-colors text-gray-600 dark:text-gray-300">The Loop</button>
@@ -1768,6 +1845,7 @@
                       <div className="flex flex-col gap-4">
                         <button onClick={() => navigate('how-to-learn')} className="text-left py-2 px-4 hover:bg-gray-50 dark:hover:bg-slate-800 rounded-lg dark:text-white">How to Learn</button>
                         <button onClick={() => navigate('learn')} className="text-left py-2 px-4 hover:bg-gray-50 dark:hover:bg-slate-800 rounded-lg dark:text-white">Find Teachers</button>
+                        <button onClick={() => navigate('credits')} className="text-left py-2 px-4 hover:bg-gray-50 dark:hover:bg-slate-800 rounded-lg dark:text-white">Credits Marketplace</button>
                         <button onClick={() => navigate('live-lounge')} className="text-left py-2 px-4 hover:bg-gray-50 dark:hover:bg-slate-800 rounded-lg dark:text-white text-red-500 font-bold">Live Lounge 🔴</button>
                         <button onClick={() => navigate('bounties')} className="text-left py-2 px-4 hover:bg-gray-50 dark:hover:bg-slate-800 rounded-lg dark:text-white">Requests (Bounties)</button>
                         <button onClick={() => navigate('teach')} className="text-left py-2 px-4 hover:bg-gray-50 dark:hover:bg-slate-800 rounded-lg dark:text-white">Start Teaching</button>
@@ -1788,6 +1866,7 @@
                   {page === 'bounties' && <BountyBoardPage />}
                   {page === 'teach' && <TeachPage />}
                   {page === 'dashboard' && <DashboardPage />}
+                  {page === 'credits' && <CreditsMarketplacePage />}
                   {page === 'wallet' && <WalletPage />}
                   {page === 'investor' && <InvestorPage />}
                   {page === 'loop' && <TheLoopPage />}
