@@ -5,7 +5,6 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>ExchangeU | The Skill Economy</title>
     
-    <!-- 1. Load Tailwind CSS (Styling) -->
     <script src="https://cdn.tailwindcss.com"></script>
     <script>
         tailwind.config = {
@@ -18,11 +17,17 @@
                         'confetti': 'confetti 1s ease-out forwards',
                         'bounce-short': 'bounce 0.5s ease-in-out 2',
                         'pulse-fast': 'pulse 1.5s cubic-bezier(0.4, 0, 0.6, 1) infinite',
+                        'ping-slow': 'ping 2s cubic-bezier(0, 0, 0.2, 1) infinite',
+                        'slide-in-left': 'slideInLeft 0.5s ease-out',
                     },
                     keyframes: {
                         confetti: {
                             '0%': { transform: 'translateY(0) rotate(0deg)', opacity: 1 },
                             '100%': { transform: 'translateY(100px) rotate(720deg)', opacity: 0 }
+                        },
+                        slideInLeft: {
+                            '0%': { transform: 'translateX(100%)', opacity: 0 },
+                            '100%': { transform: 'translateX(0)', opacity: 1 }
                         }
                     }
                 }
@@ -30,11 +35,9 @@
         }
     </script>
 
-    <!-- 2. Load React & ReactDOM -->
     <script crossorigin src="https://unpkg.com/react@18/umd/react.development.js"></script>
     <script crossorigin src="https://unpkg.com/react-dom@18/umd/react-dom.development.js"></script>
     
-    <!-- 3. Load Babel -->
     <script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
     
     <style>
@@ -127,7 +130,7 @@
         const DollarSign = (props) => <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" {...props}><line x1="12" x2="12" y1="2" y2="22"/><path d="M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"/></svg>;
         const Share2 = (props) => <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" {...props}><circle cx="18" cy="5" r="3"/><circle cx="6" cy="12" r="3"/><circle cx="18" cy="19" r="3"/><line x1="8.59" x2="15.42" y1="13.51" y2="17.49"/><line x1="15.41" x2="8.59" y1="6.51" y2="10.49"/></svg>;
         const Bot = (props) => <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" {...props}><path d="M12 8V4H8"/><rect width="16" height="12" x="4" y="8" rx="2"/><path d="M2 14h2"/><path d="M20 14h2"/><path d="M15 13v2"/><path d="M9 13v2"/></svg>;
-        const Sparkles = (props) => <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" {...props}><path d="m12 3-1.912 5.813a2 2 0 0 1-1.275 1.275L3 12l5.813 1.912a2 2 0 0 1 1.275 1.275L12 21l1.912-5.813a2 2 0 0 1 1.275-1.275L21 12l-5.813-1.912a2 2 0 0 1-1.275-1.275L12 3Z"/><path d="M5 3v4"/><path d="M9 3v4"/><path d="M3 5h4"/><path d="M3 9h4"/></svg>;
+        const Sparkles = (props) => <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" {...props}><path d="m12 3-1.912 5.813a2 2 0 0 1-1.275 1.275L3 12l5.813 1.912a2 2 0 0 1 1.275 1.275L12 21l1.912-5.813a2 2 0 0 1 1.275-1.275L12 3Z"/><path d="M5 3v4"/><path d="M9 3v4"/><path d="M3 5h4"/><path d="M3 9h4"/></svg>;
         const Volume2 = (props) => <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" {...props}><polygon points="11 5 6 9 2 9 2 15 6 15 11 19 11 5"/><path d="M15.54 8.46a5 5 0 0 1 0 7.07"/><path d="M19.07 4.93a10 10 0 0 1 0 14.14"/></svg>;
         const Loader2 = (props) => <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" {...props}><path d="M21 12a9 9 0 1 1-6.219-8.56"/></svg>;
         const Upload = (props) => <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" {...props}><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="17 8 12 3 7 8"/><line x1="12" x2="12" y1="3" y2="15"/></svg>;
@@ -158,6 +161,11 @@
         const Plus = (props) => <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" {...props}><path d="M5 12h14"/><path d="M12 5v14"/></svg>;
         const MapPin = (props) => <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" {...props}><path d="M20 10c0 6-8 12-8 12s-8-6-8-12a8 8 0 0 1 16 0Z"/><circle cx="12" cy="10" r="3"/></svg>;
         const Coffee = (props) => <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" {...props}><path d="M18 8h1a4 4 0 0 1 0 8h-1"/><path d="M2 8h16v9a4 4 0 0 1-4 4H6a4 4 0 0 1-4-4V8z"/><line x1="6" x2="6" y1="1" y2="4"/><line x1="10" x2="10" y1="1" y2="4"/><line x1="14" x2="14" y1="1" y2="4"/></svg>;
+        const AlertTriangle = (props) => <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" {...props}><path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"/><line x1="12" y1="9" x2="12" y2="13"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg>;
+        const Edit3 = (props) => <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" {...props}><path d="M12 20h9"/><path d="M16.5 3.5a2.12 2.12 0 0 1 3 3L7 19l-4 1 1-4Z"/><path d="m19 13-1.5 1.5"/></svg>;
+        const HardHat = (props) => <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" {...props}><path d="m9 11 4 4-2 3-5-2 3-5Z"/><path d="M22 13v3a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2v-3"/><path d="M10 2c1 0 2 1 2 3v2"/><path d="M14 11c0-1-1-2-2-2h-1"/><path d="M14 3v5"/><path d="M10 3v5"/><path d="M16 4h2a2 2 0 0 1 2 2v1"/><path d="M8 4H6a2 2 0 0 0-2 2v1"/></svg>;
+        const CheckSquare = (props) => <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" {...props}><polyline points="9 11 12 14 22 4"/><path d="M21 12v7a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11"/></svg>;
+        const Layers = (props) => <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" {...props}><path d="m12.83 2.18.43.51c.36.43.36 1.04 0 1.47l-8.62 10.9-1.39-1.87a.84.84 0 0 1-.03-1.2l3.43-5.32 6.18-7.79a1.05 1.05 0 0 1 1.77 0z"/><path d="m2 14 6 7.5 7-7.5"/><path d="M15 10l6 7.5 3-2.5"/></svg>;
 
         
         // --- MOCK DATA ---
@@ -196,6 +204,22 @@
             { id: 201, host: "Emma Watson", topic: "Casual English Chat", viewers: 0, avatar: "https://api.dicebear.com/7.x/avataaars/svg?seed=Emma" },
             { id: 202, host: "Dev Guru", topic: "Code Review: CSS Grid", viewers: 1, avatar: "https://api.dicebear.com/7.x/avataaars/svg?seed=Dev" },
         ];
+        
+        const AI_REVIEW_DATA = {
+            summary: "The session successfully covered React's useState and useEffect hooks. Marcus noted your quick grasp of state but identified a slight hesitation when defining dependencies for useEffect.",
+            key_concepts: ["useState (90% mastery)", "useEffect (75% mastery)", "State Immutability (85% mastery)"],
+            homework: [
+                { id: 1, title: "Dependency Array Challenge", desc: "Create a component to fetch and display data. Manipulate the dependency array to observe different render cycles.", completed: false },
+                { id: 2, title: "Simple Counter App", desc: "Build a counter with a button to increment and a button to decrement. Ensure the UI updates correctly.", completed: true },
+            ],
+            next_steps: [
+                "Book an Advanced Hooks session with Elena.",
+                "Review the 'cleanup' function in useEffect documentation.",
+            ],
+            total_xp_gain: 50,
+            mastery_percent: 78,
+            session_topic: "Intro to React Hooks",
+        };
 
         // --- MAIN APP COMPONENT ---
 
@@ -229,6 +253,7 @@
           const [aiTopic, setAiTopic] = useState("");
           const [aiResult, setAiResult] = useState(""); 
           const [ttsLoading, setTtsLoading] = useState(false);
+          const [guardianHint, setGuardianHint] = useState(null);
 
           // New Features State
           const [bounties, setBounties] = useState(INITIAL_BOUNTIES);
@@ -236,6 +261,7 @@
           const [showLevelUp, setShowLevelUp] = useState(false);
           const [sessionTimer, setSessionTimer] = useState(0);
           const [walletAnim, setWalletAnim] = useState(false);
+          const [reviewSessionData, setReviewSessionData] = useState(null); // Hold data for AI review page
 
           // Transactions
           const [transactions, setTransactions] = useState([
@@ -274,6 +300,26 @@
              const t = setTimeout(() => setWalletAnim(false), 500);
              return () => clearTimeout(t);
           }, [user.credits]);
+          
+          // AI Guardian Hint Simulation
+          useEffect(() => {
+            if (page === 'classroom') {
+              const hints = [
+                { type: 'speech', text: 'Guardian Detected: Your tone indicates mild confusion. Remember to use `const` for immutable variables in this context.' },
+                { type: 'visual', text: 'Guardian Detected: Hand placement suggests a pause in problem-solving. Hint: Check the base case in your recursive function.' },
+                { type: 'speech', text: 'Guardian Detected: Verbal filler ("um") detected. Deep breath! Rephrase your question for better clarity.' }
+              ];
+              
+              const interval = setInterval(() => {
+                setGuardianHint(hints[Math.floor(Math.random() * hints.length)]);
+                const timer = setTimeout(() => setGuardianHint(null), 8000); // Clear after 8s
+                return () => clearTimeout(timer);
+              }, 15000); // Show a new hint every 15 seconds
+
+              return () => clearInterval(interval);
+            }
+          }, [page]);
+
 
           // Helpers
           const getNextLevelXp = () => {
@@ -446,16 +492,33 @@
           };
           
           const handleEndSession = () => {
-              navigate('post-session');
+              // Prepare mock data for the AI Review Page
+              setReviewSessionData(AI_REVIEW_DATA);
+              navigate('ai-review');
           };
           
           const submitReviewAndFinish = () => {
-              const xpGain = 50;
+              const xpGain = reviewSessionData.total_xp_gain;
               checkLevelUp(user.xp + xpGain);
               // Refund small amount for good behavior mock
               setUser(u => ({...u, credits: u.credits + 0.1})); 
               navigate('dashboard');
           };
+          
+          const handleToggleHomework = (id) => {
+              setReviewSessionData(prev => ({
+                  ...prev,
+                  homework: prev.homework.map(h => h.id === id ? { ...h, completed: !h.completed } : h)
+              }));
+          };
+          
+          const simulateAICallback = async () => {
+              setAiLoading(true);
+              const result = await new Promise(resolve => setTimeout(() => resolve(AI_REVIEW_DATA.summary), 2000));
+              setAiResult(result);
+              setAiLoading(false);
+          }
+
 
           // --- COMPONENTS ---
           const Button = ({ children, onClick, variant = 'primary', className = '', disabled = false, loading = false, icon: Icon, size = 'md' }) => {
@@ -495,6 +558,31 @@
                 {children}
             </span>
           );
+          
+          // --- AI Guardian Component for Classroom ---
+          const AIGuardian = ({ hint, currentTopic }) => {
+              if (!hint) {
+                  return (
+                      <div className="p-4 bg-gray-800 rounded-xl text-center text-gray-500 border border-gray-700">
+                          <Bot size={20} className="mx-auto mb-1 text-purple-400"/>
+                          <p className="text-xs font-medium">AI Guardian Active</p>
+                          <p className="text-[10px] text-gray-600">Monitoring {currentTopic}...</p>
+                      </div>
+                  );
+              }
+              
+              return (
+                  <div className={`p-4 rounded-xl shadow-lg border-l-4 ${hint.type === 'speech' ? 'bg-red-900/40 border-red-500' : 'bg-green-900/40 border-green-500'} animate-slide-in-left`}>
+                      <div className="flex items-center gap-2 mb-2">
+                          <AlertTriangle size={18} className={`${hint.type === 'speech' ? 'text-red-400' : 'text-green-400'} animate-pulse`}/>
+                          <span className="text-sm font-bold text-white">AI Predictive Hint</span>
+                      </div>
+                      <p className="text-xs text-gray-300 italic">{hint.text}</p>
+                      <p className="text-right text-[10px] text-gray-500 mt-2">Source: {hint.type} Pattern Analysis</p>
+                  </div>
+              );
+          };
+
 
           // --- PAGES ---
           
@@ -1002,7 +1090,7 @@
             <div className="pt-24 pb-12 px-4 animate-fade-in min-h-screen bg-gray-50 dark:bg-slate-900">
                 <Section>
                 {/* Hero */}
-                <div className="text-center mb-12">
+                <div className="text-center mb-8">
                     <Badge color="green">Marketplace</Badge>
                     <h1 className="mt-4 text-4xl font-bold text-gray-900 dark:text-white">Buy & Sell Credits</h1>
                     <p className="text-xl text-gray-600 dark:text-gray-400 mt-4 max-w-2xl mx-auto">
@@ -1015,6 +1103,31 @@
                         <span className="text-gray-500 text-sm">Your Balance:</span>
                         <span className="font-bold text-gray-900 dark:text-white text-lg">{user.credits.toFixed(1)} CR</span>
                     </div>
+                    </div>
+                </div>
+
+                {/* NEW: Pro Subscription Box */}
+                <div className="max-w-4xl mx-auto mb-12 animate-fade-in">
+                    <div className="bg-gradient-to-r from-gray-900 to-slate-800 text-white rounded-2xl p-6 shadow-xl border border-yellow-500/50 relative overflow-hidden flex flex-col md:flex-row items-center justify-between gap-6">
+                        {/* Background Glow */}
+                        <div className="absolute top-0 right-0 w-64 h-64 bg-yellow-500/10 rounded-full blur-3xl -mr-16 -mt-16 pointer-events-none"></div>
+
+                        <div className="relative z-10">
+                            <div className="flex items-center gap-3 mb-2">
+                                <div className="bg-yellow-500 text-black text-xs font-black px-2 py-1 rounded">PRO</div>
+                                <h3 className="text-2xl font-bold">Upgrade to Pro — $4.99/month</h3>
+                            </div>
+                            <p className="text-gray-300 mb-4">Unlock premium perks:</p>
+                            <div className="flex flex-wrap gap-4 text-sm text-gray-200">
+                                <span className="flex items-center gap-1"><Zap size={14} className="text-yellow-400"/> Fast Matching</span>
+                                <span className="flex items-center gap-1"><TrendingUp size={14} className="text-yellow-400"/> Higher Visibility</span>
+                                <span className="flex items-center gap-1"><Bot size={14} className="text-yellow-400"/> AI Tools</span>
+                                <span className="flex items-center gap-1"><Video size={14} className="text-yellow-400"/> Recording + Notes</span>
+                                <span className="flex items-center gap-1"><Shield size={14} className="text-yellow-400"/> Priority Support</span>
+                            </div>
+                        </div>
+
+                        <Button variant="secondary" className="whitespace-nowrap shadow-[0_0_20px_rgba(234,179,8,0.3)] hover:shadow-[0_0_30px_rgba(234,179,8,0.5)] transition-shadow">Subscribe for $4.99</Button>
                     </div>
                 </div>
 
@@ -1343,6 +1456,336 @@
               </Section>
              </div>
           );
+          
+          const InvestorPage = () => (
+            <div className="pt-24 pb-12 px-4 animate-fade-in">
+              <Section>
+                <div className="text-center max-w-4xl mx-auto mb-16">
+                  <div className="inline-block px-4 py-1 bg-yellow-400 text-purple-900 font-bold rounded-full text-sm mb-6">SEED ROUND OPEN</div>
+                  <h1 className="text-5xl font-extrabold text-gray-900 dark:text-white tracking-tight">
+                    Democratizing the <span className="text-purple-600">$350B</span> E-Learning Economy
+                  </h1>
+                  <p className="mt-6 text-xl text-gray-600 dark:text-gray-300 max-w-3xl mx-auto">
+                    ExchangeU is the first decentralized skills marketplace that solves the "cost of entry" barrier in education by turning time into currency.
+                  </p>
+                </div>
+
+                {/* Metrics Grid */}
+                <div className="grid md:grid-cols-4 gap-6 mb-16">
+                  {[
+                    { label: "TAM", value: "$350B", sub: "Global E-Learning" },
+                    { label: "SAM", value: "$85B", sub: "Peer Coaching" },
+                    { label: "Users", value: "10k+", sub: "Beta Active" },
+                    { label: "Retention", value: "48%", sub: "Week 8 Cohort" },
+                  ].map((m, i) => (
+                    <Card key={i} className="text-center bg-gray-50 dark:bg-slate-800 border-none">
+                      <div className="text-3xl font-black text-purple-700 dark:text-yellow-400 mb-1">{m.value}</div>
+                      <div className="font-bold text-gray-900 dark:text-white">{m.label}</div>
+                      <div className="text-sm text-gray-500">{m.sub}</div>
+                    </Card>
+                  ))}
+                </div>
+
+                {/* Two Column Pitch */}
+                <div className="grid lg:grid-cols-2 gap-16 items-center mb-20">
+                   <div>
+                     <h2 className="text-3xl font-bold text-gray-900 dark:text-white mb-6">The Problem: Education is Gatekept</h2>
+                     <p className="text-gray-600 dark:text-gray-300 mb-6 text-lg leading-relaxed">
+                       Traditional education leaves students with $30k+ debt. Online courses have a 3% completion rate because they lack accountability. People want to learn, but they can't afford expert tutors.
+                     </p>
+                     <h2 className="text-3xl font-bold text-gray-900 dark:text-white mb-6">Our Solution: The Time Economy</h2>
+                     <p className="text-gray-600 dark:text-gray-300 mb-6 text-lg leading-relaxed">
+                       We tokenize time. A student pays with their own skill. By teaching English for an hour, they earn a credit to learn Python for an hour. No fiat currency required for the exchange, lowering the barrier to entry to zero.
+                     </p>
+                   </div>
+                   <div className="bg-slate-900 rounded-3xl p-8 text-white shadow-2xl relative overflow-hidden">
+                      <div className="absolute top-0 right-0 -mt-20 -mr-20 w-64 h-64 bg-purple-500 rounded-full blur-3xl opacity-20"></div>
+                      <h3 className="text-2xl font-bold mb-6">Business Model & Monetization</h3>
+                      <ul className="space-y-4">
+                        <li className="flex items-start gap-3">
+                          <div className="bg-green-500/20 p-2 rounded-lg text-green-400"><DollarSign size={20}/></div>
+                          <div>
+                            <span className="font-bold block">Transaction Fees</span>
+                            <span className="text-slate-400 text-sm">We take a 10% fee on cash-out transactions when experts sell credits.</span>
+                          </div>
+                        </li>
+                        <li className="flex items-start gap-3">
+                          <div className="bg-blue-500/20 p-2 rounded-lg text-blue-400"><Briefcase size={20}/></div>
+                          <div>
+                            <span className="font-bold block">B2B Enterprise</span>
+                            <span className="text-slate-400 text-sm">Companies use ExchangeU for internal employee mentorship programs ($10/user/mo).</span>
+                          </div>
+                        </li>
+                        <li className="flex items-start gap-3">
+                          <div className="bg-pink-500/20 p-2 rounded-lg text-pink-400"><Zap size={20}/></div>
+                          <div>
+                            <span className="font-bold block">Premium Features</span>
+                            <span className="text-slate-400 text-sm">$8/mo for HD Video, Recording, and AI Summaries.</span>
+                          </div>
+                        </li>
+                      </ul>
+                   </div>
+                </div>
+
+                {/* The AI Moat - Old One */}
+                <div className="mb-20 bg-gradient-to-r from-indigo-900 to-purple-900 rounded-3xl p-12 text-center text-white relative overflow-hidden">
+                   <div className="relative z-10">
+                     <Badge color="pink">The Technology Moat</Badge>
+                     <h2 className="text-3xl font-bold mt-6 mb-4">Powered by Gemini AI</h2>
+                     <p className="max-w-2xl mx-auto text-lg text-purple-200 mb-8">
+                       We aren't just connecting people. We are making them better teachers. Our proprietary "AI Lesson Architect" and "Bio Enhancer" ensure quality control at scale, solving the biggest issue in peer-to-peer networks.
+                     </p>
+                     <div className="flex justify-center gap-8">
+                       <div className="flex flex-col items-center">
+                         <Bot size={40} className="mb-2 text-pink-400"/>
+                         <span className="font-bold">Auto-Curriculum</span>
+                       </div>
+                       <div className="flex flex-col items-center">
+                         <Shield size={40} className="mb-2 text-blue-400"/>
+                         <span className="font-bold">Identity Verification</span>
+                       </div>
+                       <div className="flex flex-col items-center">
+                         <Globe size={40} className="mb-2 text-green-400"/>
+                         <span className="font-bold">Real-time Translation</span>
+                       </div>
+                     </div>
+                   </div>
+                </div>
+
+                {/* Unit Economics */}
+                <div className="grid md:grid-cols-3 gap-8 mb-16">
+                   <Card key="ltv" className="text-center">
+                     <h3 className="text-gray-500 font-bold mb-2">Lifetime Value</h3>
+                     <div className="text-4xl font-bold text-green-600">$145</div>
+                     <p className="text-xs text-gray-400 mt-2">Top 20% Users</p>
+                   </Card>
+                   <Card key="cac" className="text-center">
+                     <h3 className="text-gray-500 font-bold mb-2">Cust. Acquisition Cost</h3>
+                     <div className="text-4xl font-bold text-red-500">$4.20</div>
+                     <p className="text-xs text-gray-400 mt-2">Viral Invite Loop</p>
+                   </Card>
+                   <Card key="ratio" className="text-center">
+                     <h3 className="text-gray-500 font-bold mb-2">LTV:CAC Ratio</h3>
+                     <div className="text-4xl font-bold text-purple-600">34:1</div>
+                     <p className="text-xs text-gray-400 mt-2">Industry Standard is 3:1</p>
+                   </Card>
+                </div>
+                
+                {/* New AI Innovation CTA */}
+                <div className="text-center mb-16">
+                    <Button variant="ai" size="lg" icon={Sparkles} onClick={() => navigate('ai-innovation')}>
+                        View Our Full AI Innovation Deck
+                    </Button>
+                </div>
+
+                {/* Contact Form */}
+                <div className="max-w-2xl mx-auto text-center">
+                   <h2 className="text-3xl font-bold text-gray-900 dark:text-white mb-8">Join Our $1.5M Seed Round</h2>
+                   <Card className="p-8 text-left">
+                     <form className="space-y-4" onSubmit={(e) => e.preventDefault()}>
+                       <div>
+                         <label className="block text-sm font-medium mb-1 dark:text-gray-300">Name</label>
+                         <input className="w-full px-4 py-2 rounded-lg border dark:border-slate-600 dark:bg-slate-700" />
+                       </div>
+                       <div>
+                         <label className="block text-sm font-medium mb-1 dark:text-gray-300">Email</label>
+                         <input className="w-full px-4 py-2 rounded-lg border dark:border-slate-600 dark:bg-slate-700" />
+                       </div>
+                       <div>
+                         <label className="block text-sm font-medium mb-1 dark:text-gray-300">Message</label>
+                         <textarea className="w-full px-4 py-2 rounded-lg border dark:border-slate-600 dark:bg-slate-700 h-24"></textarea>
+                       </div>
+                       <Button variant="primary" className="w-full">Request Access to Data Room</Button>
+                       <p className="text-center text-sm text-gray-500 mt-4">Direct contact: talalfhaddad@gmail.com</p>
+                     </form>
+                   </Card>
+                </div>
+              </Section>
+            </div>
+          );
+          
+          // --- NEW: AI Innovation Page ---
+          const AIInnovationPage = () => (
+             <div className="pt-24 pb-12 px-4 animate-fade-in min-h-screen bg-slate-900 text-white">
+                <Section className="text-center">
+                    <h1 className="text-5xl font-extrabold mb-4 bg-clip-text text-transparent bg-gradient-to-r from-pink-400 to-purple-400">
+                        AI-Powered Learning Innovations
+                    </h1>
+                    <p className="text-xl text-gray-400 max-w-3xl mx-auto">
+                        We leverage Gemini AI to go beyond connection, ensuring mastery and retention for every user.
+                    </p>
+                </Section>
+                
+                {/* Section 1: AI Practice Engine (Post-Lesson) */}
+                <Section className="bg-slate-800/50 rounded-3xl mb-12">
+                   <div className="grid md:grid-cols-2 gap-12 items-center">
+                      <div>
+                          <Badge color="pink">Post-Lesson Mastery</Badge>
+                          <h2 className="text-3xl font-bold mt-4 mb-6">The AI Practice Engine</h2>
+                          <p className="text-gray-300 mb-6 text-lg">
+                            Mastery requires deliberate practice. After every live session, our AI instantly generates a personalized study plan, eliminating the homework gap.
+                          </p>
+                          <ul className="space-y-4">
+                              <li className="flex items-start gap-3">
+                                <div className="p-2 bg-purple-500/20 rounded-full text-purple-400"><Edit3 size={18}/></div>
+                                <div><span className="font-bold">Personalized Homework:</span> Tasks generated based on the session transcript.</div>
+                              </li>
+                              <li className="flex items-start gap-3">
+                                <div className="p-2 bg-yellow-500/20 rounded-full text-yellow-400"><TrendingUp size={18}/></div>
+                                <div><span className="font-bold">Smart Progress Tracking:</span> Visual breakdown of concept mastery over time.</div>
+                              </li>
+                          </ul>
+                      </div>
+                      
+                      {/* Animation Mockup */}
+                      <div className="relative p-6 bg-slate-900 rounded-xl shadow-2xl">
+                          <h4 className="font-bold text-gray-300 mb-4">Mastery Progress: Intro to Python</h4>
+                          <div className="h-40 p-4 bg-slate-800 rounded-lg flex flex-col justify-end">
+                            <div className="flex justify-between items-end h-full">
+                              {[80, 50, 95, 70, 45, 90].map((h, i) => (
+                                <div key={i} className="flex flex-col items-center">
+                                  <div className="text-xs text-green-400 mb-1 animate-slide-up" style={{ animationDelay: `${i*0.1}s` }}>{h}%</div>
+                                  <div className={`w-4 bg-purple-600 rounded-t-sm transition-all duration-1000 ease-out`} style={{ height: `${h}%` }}></div>
+                                </div>
+                              ))}
+                            </div>
+                          </div>
+                          <div className="mt-4 space-y-2">
+                             <div className="p-3 bg-slate-700/50 rounded-lg flex justify-between items-center animate-slide-up animation-delay-500">
+                                 <span className="flex items-center gap-2"><CheckSquare size={16} className="text-green-400"/> HW: Build a simple API call</span>
+                                 <span className="text-xs text-green-400 font-bold">Done</span>
+                             </div>
+                             <div className="p-3 bg-slate-700/50 rounded-lg flex justify-between items-center animate-slide-up animation-delay-700">
+                                 <span className="flex items-center gap-2"><CheckSquare size={16} className="text-yellow-400"/> HW: Debug the 'async' function</span>
+                                 <span className="text-xs text-yellow-400 font-bold">In Progress</span>
+                             </div>
+                          </div>
+                      </div>
+                   </div>
+                </Section>
+
+                {/* Section 2: Predictive Mistake Prevention (In-Session) */}
+                <Section className="bg-slate-900/50 rounded-3xl mb-12 border border-slate-800">
+                    <div className="grid md:grid-cols-2 gap-12 items-center">
+                      {/* Animation Mockup */}
+                      <div className="relative p-6 bg-gray-800 rounded-xl shadow-2xl">
+                          <div className="relative bg-black aspect-video rounded-lg overflow-hidden flex items-center justify-center">
+                              <video autoPlay loop muted className="w-full h-full object-cover opacity-70">
+                                {/* Placeholder for Camera Feed (Visual Effect) */}
+                              </video>
+                              <div className="absolute inset-0 border-4 border-dashed border-purple-500 animate-ping-slow rounded-lg opacity-30"></div>
+                              <div className="absolute top-4 left-4 p-2 bg-red-600 text-white rounded-lg text-xs font-bold flex items-center gap-2 animate-fade-in">
+                                 <AlertTriangle size={16}/> Speech Pattern Alert
+                              </div>
+                              
+                              <div className="absolute bottom-4 right-4 p-3 bg-gray-900/90 rounded-xl max-w-[70%] border border-red-500 animate-scale-in">
+                                <p className="text-xs text-red-300 italic">"I sense hesitation. Remember the correct syntax for a Python dictionary starts with `{}` not `[]`."</p>
+                              </div>
+                          </div>
+                          <p className="text-center text-xs text-gray-400 mt-4">Live Session Analysis: Code Editor + Tone Detection</p>
+                      </div>
+
+                      <div>
+                          <Badge color="green">Real-Time Intervention</Badge>
+                          <h2 className="text-3xl font-bold mt-4 mb-6">Predictive Mistake Prevention (AI Guardian)</h2>
+                          <p className="text-gray-300 mb-6 text-lg">
+                            We use computer vision and tone analysis to predict a mistake before the learner wastes time. It's subtle, non-interruptive guidance that boosts confidence.
+                          </p>
+                          <ul className="space-y-4">
+                              <li className="flex items-start gap-3">
+                                <div className="p-2 bg-green-500/20 rounded-full text-green-400"><Target size={18}/></div>
+                                <div><span className="font-bold">Real-time Coaching:</span> Visual or textual cues sent only to the learner.</div>
+                              </li>
+                              <li className="flex items-start gap-3">
+                                <div className="p-2 bg-pink-500/20 rounded-full text-pink-400"><HardHat size={18}/></div>
+                                <div><span className="font-bold">Confidence Layer:</span> Reduces learner anxiety by offering a safety net.</div>
+                              </li>
+                          </ul>
+                      </div>
+                    </div>
+                </Section>
+                
+                {/* Section 3: Why This Beats Competitors */}
+                <Section>
+                   <h2 className="text-3xl font-bold text-center mb-10">Unmatched Value: The ExchangeU Edge</h2>
+                   
+                   <div className="overflow-x-auto">
+                        <table className="min-w-full divide-y divide-slate-700">
+                            <thead>
+                                <tr className="text-left text-xs font-bold uppercase tracking-wider text-gray-400">
+                                    <th className="px-6 py-3">Feature</th>
+                                    <th className="px-6 py-3 text-purple-400">ExchangeU</th>
+                                    <th className="px-6 py-3">Preply</th>
+                                    <th className="px-6 py-3">Duolingo</th>
+                                    <th className="px-6 py-3">Coursera</th>
+                                </tr>
+                            </thead>
+                            <tbody className="divide-y divide-slate-800 text-gray-300">
+                                <tr className="hover:bg-slate-800/50 transition-colors">
+                                    <td className="px-6 py-4 font-bold">Skill-for-Skill Currency</td>
+                                    <td className="px-6 py-4 text-purple-400 font-bold">Yes (Credit Economy)</td>
+                                    <td className="px-6 py-4">No (Fiat only)</td>
+                                    <td className="px-6 py-4">No</td>
+                                    <td className="px-6 py-4">No</td>
+                                </tr>
+                                <tr className="hover:bg-slate-800/50 transition-colors">
+                                    <td className="px-6 py-4 font-bold">Real-Time Predictive AI</td>
+                                    <td className="px-6 py-4 text-purple-400 font-bold">Yes (AI Guardian)</td>
+                                    <td className="px-6 py-4">No</td>
+                                    <td className="px-6 py-4">No (Post-facto)</td>
+                                    <td className="px-6 py-4">No</td>
+                                </tr>
+                                <tr className="hover:bg-slate-800/50 transition-colors">
+                                    <td className="px-6 py-4 font-bold">Personalized AI Homework</td>
+                                    <td className="px-6 py-4 text-purple-400 font-bold">Yes</td>
+                                    <td className="px-6 py-4">No</td>
+                                    <td className="px-6 py-4">Yes (Static)</td>
+                                    <td className="px-6 py-4">Yes (Static)</td>
+                                </tr>
+                                <tr className="hover:bg-slate-800/50 transition-colors">
+                                    <td className="px-6 py-4 font-bold">1:1 Live Human Sessions</td>
+                                    <td className="px-6 py-4 text-purple-400 font-bold">Yes</td>
+                                    <td className="px-6 py-4">Yes</td>
+                                    <td className="px-6 py-4">No</td>
+                                    <td className="px-6 py-4">No (Optional Group)</td>
+                                </tr>
+                                <tr className="hover:bg-slate-800/50 transition-colors">
+                                    <td className="px-6 py-4 font-bold">Zero Cost of Entry</td>
+                                    <td className="px-6 py-4 text-purple-400 font-bold">Yes</td>
+                                    <td className="px-6 py-4">No</td>
+                                    <td className="px-6 py-4">Yes (Limited)</td>
+                                    <td className="px-6 py-4">No</td>
+                                </tr>
+                            </tbody>
+                        </table>
+                   </div>
+                </Section>
+                
+                {/* Section 4: Vision */}
+                <Section className="text-center bg-slate-800/50 rounded-3xl">
+                   <h2 className="text-3xl font-bold mb-4">Our Vision: True Universal Education</h2>
+                   <p className="text-gray-300 max-w-3xl mx-auto text-lg mb-8">
+                     We see a future where the ExchangeU Credit is the global standard for non-traditional skill exchange. A world where your only barrier to learning a new skill is the time you're willing to commit to teaching one.
+                   </p>
+                   <div className="flex justify-center gap-8">
+                      <div className="flex flex-col items-center">
+                         <Layers size={40} className="text-blue-400 mb-2"/>
+                         <span className="font-bold">Decentralized Skill Graph</span>
+                      </div>
+                      <div className="flex flex-col items-center">
+                         <Globe size={40} className="text-green-400 mb-2"/>
+                         <span className="font-bold">180+ Countries</span>
+                      </div>
+                      <div className="flex flex-col items-center">
+                         <DollarSign size={40} className="text-yellow-400 mb-2"/>
+                         <span className="font-bold">Deflationary Currency</span>
+                      </div>
+                   </div>
+                   <Button variant="primary" className="mt-12" onClick={() => navigate('investor')}>Back to Investor Deck</Button>
+                </Section>
+             </div>
+          );
+
 
           const SessionWaitingPage = () => (
             <div className="pt-24 pb-12 px-4 animate-fade-in min-h-screen bg-gray-900 flex flex-col items-center justify-center relative overflow-hidden">
@@ -1462,6 +1905,32 @@
               const [time, setTime] = useState(3600); // 1 hour in seconds
               const [micOn, setMicOn] = useState(true);
               const [camOn, setCamOn] = useState(true);
+              const videoRef = useRef(null);
+              
+              // Camera Initialization
+              useEffect(() => {
+                  let currentStream = null;
+                  if (navigator.mediaDevices && navigator.mediaDevices.getUserMedia) {
+                      navigator.mediaDevices.getUserMedia({ video: true, audio: true })
+                          .then(stream => {
+                              currentStream = stream;
+                              if (videoRef.current) {
+                                  videoRef.current.srcObject = stream;
+                              }
+                          })
+                          .catch(err => {
+                              console.error("Could not access camera/mic: ", err);
+                          });
+                  }
+                  
+                  // Cleanup function to stop tracks when component unmounts
+                  return () => {
+                      if (currentStream) {
+                          currentStream.getTracks().forEach(track => track.stop());
+                      }
+                  };
+              }, []);
+
 
               useEffect(() => {
                   const t = setInterval(() => setTime(prev => prev > 0 ? prev - 1 : 0), 1000);
@@ -1532,17 +2001,26 @@
                               <div className="absolute bottom-4 right-4 bg-gray-900/80 text-white text-xs px-2 py-1 rounded">Shared Whiteboard</div>
                           </div>
 
-                          {/* Side Bar (Videos) */}
+                          {/* Side Bar (Videos & AI Guardian) */}
                           <div className="w-64 flex flex-col gap-4">
+                              {/* Teacher Video */}
                               <div className="bg-gray-800 rounded-xl aspect-video relative overflow-hidden shadow-lg border border-gray-700">
                                   <img src={`https://api.dicebear.com/7.x/avataaars/svg?seed=${currentSession.isHost ? "Student" : currentSession.host}`} className="w-full h-full object-cover"/>
                                   <div className="absolute bottom-2 left-2 text-white text-xs font-bold drop-shadow-md">{currentSession.isHost ? "Student" : currentSession.host}</div>
                               </div>
+                              {/* User Video */}
                               <div className="bg-gray-800 rounded-xl aspect-video relative overflow-hidden shadow-lg border border-gray-700">
-                                  <img src={user.img} className="w-full h-full object-cover"/>
+                                  {camOn ? (
+                                     <video ref={videoRef} autoPlay playsInline className="w-full h-full object-cover scale-x-[-1]"></video>
+                                  ) : (
+                                     <div className="w-full h-full flex items-center justify-center text-gray-500">Camera Off</div>
+                                  )}
                                   <div className="absolute bottom-2 left-2 text-white text-xs font-bold drop-shadow-md">You</div>
                                   {!micOn && <div className="absolute top-2 right-2 bg-red-500/80 p-1 rounded"><MicOff size={12} className="text-white"/></div>}
                               </div>
+                              
+                              {/* AI Guardian Component */}
+                              <AIGuardian hint={guardianHint} currentTopic={currentSession.topic} />
                           </div>
                       </div>
 
@@ -1559,175 +2037,125 @@
               );
           };
           
-          const PostSessionPage = () => {
+          // --- NEW: PostSessionAIReviewPage ---
+          const PostSessionAIReviewPage = () => {
               const [rating, setRating] = useState(0);
+              const [aiResult, setAiResult] = useState(null);
+              const [aiLoading, setAiLoading] = useState(true);
+              
+              useEffect(() => {
+                  // Simulate AI generation delay
+                  const timer = setTimeout(() => {
+                      setAiResult(reviewSessionData);
+                      setAiLoading(false);
+                  }, 2000);
+                  return () => clearTimeout(timer);
+              }, [reviewSessionData]);
+              
+              if (!reviewSessionData) return <div className="pt-24 text-center dark:text-white">Loading Session Data...</div>;
+
+              const completedTasks = reviewSessionData.homework.filter(h => h.completed).length;
+              const totalTasks = reviewSessionData.homework.length;
+              const homeworkPercent = totalTasks > 0 ? (completedTasks / totalTasks) * 100 : 0;
+              
               return (
-                  <div className="pt-24 pb-12 px-4 animate-fade-in min-h-screen bg-gray-50 dark:bg-slate-900 flex items-center justify-center">
-                      <Card className="max-w-md w-full text-center p-8">
-                          <div className="w-20 h-20 bg-green-100 dark:bg-green-900/30 text-green-600 rounded-full flex items-center justify-center mx-auto mb-6">
-                              <CheckCircle size={40}/>
-                          </div>
-                          <h2 className="text-2xl font-bold text-gray-900 dark:text-white mb-2">Session Complete!</h2>
-                          <p className="text-gray-600 dark:text-gray-400 mb-8">Credits have been transferred.</p>
-                          
-                          <div className="mb-8">
-                              <p className="font-bold text-gray-900 dark:text-white mb-4">Rate your Experience</p>
-                              <div className="flex justify-center gap-2">
-                                  {[1,2,3,4,5].map(s => (
-                                      <button key={s} onClick={() => setRating(s)} className={`transition-transform hover:scale-110 ${s <= rating ? 'text-yellow-400' : 'text-gray-300'}`}>
-                                          <StarIcon size={32} fill={s <= rating ? "currentColor" : "none"}/>
-                                      </button>
-                                  ))}
+                  <div className="pt-24 pb-12 px-4 animate-fade-in min-h-screen bg-gray-50 dark:bg-slate-900">
+                      <div className="max-w-4xl mx-auto">
+                          <div className="text-center mb-8">
+                              <div className="w-20 h-20 bg-gradient-to-r from-pink-100 to-purple-100 dark:from-pink-900/30 dark:to-purple-900/30 text-purple-600 rounded-full flex items-center justify-center mx-auto mb-4">
+                                  <Bot size={40} className="text-pink-500"/>
                               </div>
+                              <h1 className="text-3xl font-extrabold text-gray-900 dark:text-white mb-2">AI Mastery Review</h1>
+                              <p className="text-lg text-gray-600 dark:text-gray-400">Post-Session Analysis for: **{reviewSessionData.session_topic}**</p>
                           </div>
                           
-                          <Button onClick={submitReviewAndFinish} className="w-full" disabled={rating === 0}>
-                              Submit Review (+50 XP)
-                          </Button>
-                      </Card>
+                          {aiLoading ? (
+                             <Card className="text-center py-12">
+                                <Loader2 className="animate-spin h-10 w-10 text-purple-600 mx-auto mb-4"/>
+                                <p className="font-bold dark:text-white">Generating Personalized Report...</p>
+                                <p className="text-sm text-gray-500">Analyzing transcript, tone, and whiteboard data.</p>
+                             </Card>
+                          ) : (
+                              <div className="space-y-6">
+                                  {/* Metrics Grid */}
+                                  <div className="grid md:grid-cols-3 gap-6">
+                                     <Card className="text-center">
+                                         <p className="text-sm text-gray-500">Mastery Score</p>
+                                         <h3 className="text-4xl font-black text-purple-600 my-1">{reviewSessionData.mastery_percent}%</h3>
+                                         <p className="text-xs text-green-500 font-bold flex justify-center items-center gap-1"><TrendingUp size={12}/> +{reviewSessionData.total_xp_gain} XP</p>
+                                     </Card>
+                                     <Card className="text-center">
+                                         <p className="text-sm text-gray-500">Homework Progress</p>
+                                         <h3 className="text-4xl font-black text-yellow-500 my-1">{completedTasks}/{totalTasks}</h3>
+                                         <p className="text-xs text-gray-400">Tasks Completed</p>
+                                     </Card>
+                                     <Card className="text-center">
+                                         <p className="text-sm text-gray-500">XP to Next Level</p>
+                                         <h3 className="text-4xl font-black text-green-600 my-1">{getNextLevelXp() - user.xp}</h3>
+                                         <p className="text-xs text-gray-400">Remaining</p>
+                                     </Card>
+                                  </div>
+                                  
+                                  {/* AI Summary and Key Concepts */}
+                                  <Card hoverEffect={false}>
+                                      <h3 className="font-bold text-xl dark:text-white mb-3 flex items-center gap-2"><Bot size={20} className="text-pink-500"/> AI Summary</h3>
+                                      <p className="text-gray-700 dark:text-gray-300 italic mb-4">"{reviewSessionData.summary}"</p>
+                                      
+                                      <h4 className="font-bold text-lg dark:text-white mt-4 mb-2">Key Concepts & Mastery</h4>
+                                      <ul className="space-y-2">
+                                          {reviewSessionData.key_concepts.map((concept, i) => (
+                                              <li key={i} className="flex justify-between items-center text-sm">
+                                                  <span className="text-gray-700 dark:text-gray-300">{concept.split('(')[0]}</span>
+                                                  <Badge color={concept.includes('90%') ? 'green' : 'yellow'}>{concept.match(/\((.*?)\)/)[1]}</Badge>
+                                              </li>
+                                          ))}
+                                      </ul>
+                                  </Card>
+
+                                  {/* AI Homework Generator */}
+                                  <Card hoverEffect={false}>
+                                      <h3 className="font-bold text-xl dark:text-white mb-3 flex items-center gap-2"><CheckSquare size={20} className="text-blue-500"/> AI-Generated Homework</h3>
+                                      <div className="space-y-3">
+                                          {reviewSessionData.homework.map(h => (
+                                              <div key={h.id} className={`p-4 rounded-xl border-2 cursor-pointer transition-all ${h.completed ? 'bg-green-50 dark:bg-green-900/20 border-green-200 dark:border-green-500/50' : 'bg-gray-50 dark:bg-slate-700/50 border-gray-200 dark:border-slate-700'}`} onClick={() => handleToggleHomework(h.id)}>
+                                                  <div className="flex items-center justify-between">
+                                                      <span className="font-bold dark:text-white">{h.title}</span>
+                                                      {h.completed ? <CheckCircle size={20} className="text-green-500"/> : <Edit3 size={20} className="text-gray-500"/>}
+                                                  </div>
+                                                  <p className="text-xs text-gray-500 mt-1">{h.desc}</p>
+                                              </div>
+                                          ))}
+                                      </div>
+                                  </Card>
+                                  
+                                  {/* Next Steps & Review */}
+                                  <Card hoverEffect={false}>
+                                      <h3 className="font-bold text-xl dark:text-white mb-3 flex items-center gap-2"><ArrowRight size={20} className="text-purple-500"/> Next Steps</h3>
+                                      <ul className="space-y-2 text-gray-700 dark:text-gray-300 list-disc list-inside">
+                                        {reviewSessionData.next_steps.map((step, i) => <li key={i}>{step}</li>)}
+                                      </ul>
+                                      
+                                      <div className="mt-8 pt-6 border-t dark:border-slate-700">
+                                        <p className="font-bold text-gray-900 dark:text-white mb-4">Rate your Teacher</p>
+                                        <div className="flex justify-center gap-2">
+                                            {[1,2,3,4,5].map(s => (
+                                                <button key={s} onClick={() => setRating(s)} className={`transition-transform hover:scale-110 ${s <= rating ? 'text-yellow-400' : 'text-gray-300'}`}>
+                                                    <StarIcon size={32} fill={s <= rating ? "currentColor" : "none"}/>
+                                                </button>
+                                            ))}
+                                        </div>
+                                      </div>
+                                  </Card>
+                                  
+                                  <Button onClick={submitReviewAndFinish} className="w-full justify-center py-4" disabled={rating === 0}>
+                                      Finalize Review & Get {reviewSessionData.total_xp_gain} XP!
+                                  </Button>
+                              </div>
+                          )}
+                      </div>
                   </div>
               );
           };
-          
-          const InvestorPage = () => (
-            <div className="pt-24 pb-12 px-4 animate-fade-in">
-              <Section>
-                <div className="text-center max-w-4xl mx-auto mb-16">
-                  <div className="inline-block px-4 py-1 bg-yellow-400 text-purple-900 font-bold rounded-full text-sm mb-6">SEED ROUND OPEN</div>
-                  <h1 className="text-5xl font-extrabold text-gray-900 dark:text-white tracking-tight">
-                    Democratizing the <span className="text-purple-600">$350B</span> E-Learning Economy
-                  </h1>
-                  <p className="mt-6 text-xl text-gray-600 dark:text-gray-300 max-w-3xl mx-auto">
-                    ExchangeU is the first decentralized skills marketplace that solves the "cost of entry" barrier in education by turning time into currency.
-                  </p>
-                </div>
-
-                {/* Metrics Grid */}
-                <div className="grid md:grid-cols-4 gap-6 mb-16">
-                  {[
-                    { label: "TAM", value: "$350B", sub: "Global E-Learning" },
-                    { label: "SAM", value: "$85B", sub: "Peer Coaching" },
-                    { label: "Users", value: "10k+", sub: "Beta Active" },
-                    { label: "Retention", value: "48%", sub: "Week 8 Cohort" },
-                  ].map((m, i) => (
-                    <Card key={i} className="text-center bg-gray-50 dark:bg-slate-800 border-none">
-                      <div className="text-3xl font-black text-purple-700 dark:text-yellow-400 mb-1">{m.value}</div>
-                      <div className="font-bold text-gray-900 dark:text-white">{m.label}</div>
-                      <div className="text-sm text-gray-500">{m.sub}</div>
-                    </Card>
-                  ))}
-                </div>
-
-                {/* Two Column Pitch */}
-                <div className="grid lg:grid-cols-2 gap-16 items-center mb-20">
-                   <div>
-                     <h2 className="text-3xl font-bold text-gray-900 dark:text-white mb-6">The Problem: Education is Gatekept</h2>
-                     <p className="text-gray-600 dark:text-gray-300 mb-6 text-lg leading-relaxed">
-                       Traditional education leaves students with $30k+ debt. Online courses have a 3% completion rate because they lack accountability. People want to learn, but they can't afford expert tutors.
-                     </p>
-                     <h2 className="text-3xl font-bold text-gray-900 dark:text-white mb-6">Our Solution: The Time Economy</h2>
-                     <p className="text-gray-600 dark:text-gray-300 mb-6 text-lg leading-relaxed">
-                       We tokenize time. A student pays with their own skill. By teaching English for an hour, they earn a credit to learn Python for an hour. No fiat currency required for the exchange, lowering the barrier to entry to zero.
-                     </p>
-                   </div>
-                   <div className="bg-slate-900 rounded-3xl p-8 text-white shadow-2xl relative overflow-hidden">
-                      <div className="absolute top-0 right-0 -mt-20 -mr-20 w-64 h-64 bg-purple-500 rounded-full blur-3xl opacity-20"></div>
-                      <h3 className="text-2xl font-bold mb-6">Business Model & Monetization</h3>
-                      <ul className="space-y-4">
-                        <li className="flex items-start gap-3">
-                          <div className="bg-green-500/20 p-2 rounded-lg text-green-400"><DollarSign size={20}/></div>
-                          <div>
-                            <span className="font-bold block">Transaction Fees</span>
-                            <span className="text-slate-400 text-sm">We take a 10% fee on cash-out transactions when experts sell credits.</span>
-                          </div>
-                        </li>
-                        <li className="flex items-start gap-3">
-                          <div className="bg-blue-500/20 p-2 rounded-lg text-blue-400"><Briefcase size={20}/></div>
-                          <div>
-                            <span className="font-bold block">B2B Enterprise</span>
-                            <span className="text-slate-400 text-sm">Companies use ExchangeU for internal employee mentorship programs ($10/user/mo).</span>
-                          </div>
-                        </li>
-                        <li className="flex items-start gap-3">
-                          <div className="bg-pink-500/20 p-2 rounded-lg text-pink-400"><Zap size={20}/></div>
-                          <div>
-                            <span className="font-bold block">Premium Features</span>
-                            <span className="text-slate-400 text-sm">$8/mo for HD Video, Recording, and AI Summaries.</span>
-                          </div>
-                        </li>
-                      </ul>
-                   </div>
-                </div>
-
-                {/* The AI Moat */}
-                <div className="mb-20 bg-gradient-to-r from-indigo-900 to-purple-900 rounded-3xl p-12 text-center text-white relative overflow-hidden">
-                   <div className="relative z-10">
-                     <Badge color="pink">The Technology Moat</Badge>
-                     <h2 className="text-3xl font-bold mt-6 mb-4">Powered by Gemini AI</h2>
-                     <p className="max-w-2xl mx-auto text-lg text-purple-200 mb-8">
-                       We aren't just connecting people. We are making them better teachers. Our proprietary "AI Lesson Architect" and "Bio Enhancer" ensure quality control at scale, solving the biggest issue in peer-to-peer networks.
-                     </p>
-                     <div className="flex justify-center gap-8">
-                       <div className="flex flex-col items-center">
-                         <Bot size={40} className="mb-2 text-pink-400"/>
-                         <span className="font-bold">Auto-Curriculum</span>
-                       </div>
-                       <div className="flex flex-col items-center">
-                         <Shield size={40} className="mb-2 text-blue-400"/>
-                         <span className="font-bold">Identity Verification</span>
-                       </div>
-                       <div className="flex flex-col items-center">
-                         <Globe size={40} className="mb-2 text-green-400"/>
-                         <span className="font-bold">Real-time Translation</span>
-                       </div>
-                     </div>
-                   </div>
-                </div>
-
-                {/* Unit Economics */}
-                <div className="grid md:grid-cols-3 gap-8 mb-16">
-                   <Card key="ltv" className="text-center">
-                     <h3 className="text-gray-500 font-bold mb-2">Lifetime Value</h3>
-                     <div className="text-4xl font-bold text-green-600">$145</div>
-                     <p className="text-xs text-gray-400 mt-2">Top 20% Users</p>
-                   </Card>
-                   <Card key="cac" className="text-center">
-                     <h3 className="text-gray-500 font-bold mb-2">Cust. Acquisition Cost</h3>
-                     <div className="text-4xl font-bold text-red-500">$4.20</div>
-                     <p className="text-xs text-gray-400 mt-2">Viral Invite Loop</p>
-                   </Card>
-                   <Card key="ratio" className="text-center">
-                     <h3 className="text-gray-500 font-bold mb-2">LTV:CAC Ratio</h3>
-                     <div className="text-4xl font-bold text-purple-600">34:1</div>
-                     <p className="text-xs text-gray-400 mt-2">Industry Standard is 3:1</p>
-                   </Card>
-                </div>
-
-                {/* Contact Form */}
-                <div className="max-w-2xl mx-auto text-center">
-                   <h2 className="text-3xl font-bold text-gray-900 dark:text-white mb-8">Join Our $1.5M Seed Round</h2>
-                   <Card className="p-8 text-left">
-                     <form className="space-y-4" onSubmit={(e) => e.preventDefault()}>
-                       <div>
-                         <label className="block text-sm font-medium mb-1 dark:text-gray-300">Name</label>
-                         <input className="w-full px-4 py-2 rounded-lg border dark:border-slate-600 dark:bg-slate-700" />
-                       </div>
-                       <div>
-                         <label className="block text-sm font-medium mb-1 dark:text-gray-300">Email</label>
-                         <input className="w-full px-4 py-2 rounded-lg border dark:border-slate-600 dark:bg-slate-700" />
-                       </div>
-                       <div>
-                         <label className="block text-sm font-medium mb-1 dark:text-gray-300">Message</label>
-                         <textarea className="w-full px-4 py-2 rounded-lg border dark:border-slate-600 dark:bg-slate-700 h-24"></textarea>
-                       </div>
-                       <Button variant="primary" className="w-full">Request Access to Data Room</Button>
-                       <p className="text-center text-sm text-gray-500 mt-4">Direct contact: talalfhaddad@gmail.com</p>
-                     </form>
-                   </Card>
-                </div>
-              </Section>
-            </div>
-          );
           
           const HowToLearnPage = () => (
             <div className="pt-24 pb-12 px-4 animate-fade-in min-h-screen bg-gray-50 dark:bg-slate-900">
@@ -1743,8 +2171,8 @@
                       { title: "1. Find Your Mentor", desc: "Use our search with live filtering to find Verified Bachelor holders or Top Rated experts in your desired field.", icon: Search, color: "blue" },
                       { title: "2. Book & Commit", desc: "Check their availability and book a session. Credits are deducted and held in escrow until the session completes.", icon: Calendar, color: "purple" },
                       { title: "3. Prepare with AI", desc: "Don't go in blind. Use our AI tools to generate questions or prerequisites before your session starts.", icon: Bot, color: "pink" },
-                      { title: "4. The Live Session", desc: "Join the secure video room. Use our whiteboard, screen sharing, and code editor to learn interactively.", icon: Video, color: "green" },
-                      { title: "5. Review & Level Up", desc: "Rate your teacher. Completing sessions earns you 'Learner XP', unlocking cheaper credit rates.", icon: Star, color: "yellow" },
+                      { title: "4. The Live Session", desc: "Join the secure video room. Use our whiteboard, screen sharing, and our AI Guardian to learn interactively.", icon: Video, color: "green" },
+                      { title: "5. Review & Level Up", desc: "Rate your teacher. Completing sessions earns you 'Learner XP', unlocking cheaper credit rates and personalized homework.", icon: Star, color: "yellow" },
                     ].map((step, i) => (
                       <div key={i} className="flex flex-col md:flex-row items-start gap-6 p-6 bg-white dark:bg-slate-800 rounded-2xl shadow-lg hover:shadow-2xl transition-shadow border border-gray-100 dark:border-slate-700 relative overflow-hidden">
                         <div className={`absolute top-0 left-0 w-2 h-full bg-${step.color}-500`}></div>
@@ -1871,9 +2299,10 @@
                   {page === 'investor' && <InvestorPage />}
                   {page === 'loop' && <TheLoopPage />}
                   {page === 'how-to-learn' && <HowToLearnPage />}
+                  {page === 'ai-innovation' && <AIInnovationPage />} {/* New Page */}
                   {page === 'waiting-room' && <SessionWaitingPage />}
                   {page === 'classroom' && <ClassroomPage />}
-                  {page === 'post-session' && <PostSessionPage />}
+                  {page === 'ai-review' && <PostSessionAIReviewPage />} {/* New Page (Replaces post-session) */}
                 </main>
                 
                  {/* Footer - Hide in Classroom */}
