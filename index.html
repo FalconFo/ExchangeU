@@ -437,6 +437,47 @@ const BookingModal = ({ isOpen, onClose, teacher, onConfirm }) => {
     );
 };
 
+// --- NEW SUCCESS MODAL COMPONENT ---
+const BookingSuccessModal = ({ isOpen, onClose, teacher, session, onJoinNow }) => {
+    if (!isOpen) return null;
+    return (
+        <div className="fixed inset-0 z-[70] flex items-center justify-center p-4 bg-slate-900/80 backdrop-blur-sm animate-fade-in">
+            <div className="bg-white dark:bg-slate-800 rounded-3xl w-full max-w-md shadow-2xl p-8 relative text-center border border-gray-100 dark:border-slate-700">
+                <div className="w-20 h-20 bg-green-100 dark:bg-green-900/30 text-green-500 rounded-full flex items-center justify-center mx-auto mb-6 shadow-[0_0_30px_rgba(34,197,94,0.3)] animate-bounce-short">
+                    <CheckCircle size={40} />
+                </div>
+                
+                <h2 className="text-3xl font-black text-gray-900 dark:text-white mb-2">Request Sent!</h2>
+                <p className="text-lg text-gray-600 dark:text-gray-300 mb-6 leading-relaxed">
+                    Thank you! We've sent your booking request to <span className="font-bold text-purple-600 dark:text-purple-400">{teacher?.name}</span>.
+                </p>
+                
+                <div className="bg-gray-50 dark:bg-slate-700/30 p-5 rounded-2xl mb-8 text-left border border-gray-100 dark:border-slate-600 relative overflow-hidden">
+                    <div className="absolute top-0 left-0 w-1 h-full bg-yellow-400"></div>
+                    <div className="flex justify-between items-center mb-2">
+                        <span className="text-xs uppercase font-bold text-gray-400 tracking-wider">Status</span>
+                        <span className="text-xs font-bold px-2 py-1 rounded-full bg-yellow-100 text-yellow-700 dark:bg-yellow-900/50 dark:text-yellow-400 flex items-center gap-1">
+                            <Clock size={10} /> Pending Confirmation
+                        </span>
+                    </div>
+                    <div className="font-bold text-gray-900 dark:text-white text-lg mb-1">{session?.topic}</div>
+                    <p className="text-sm text-gray-500">Credits have been held in escrow.</p>
+                </div>
+
+                <div className="grid grid-cols-2 gap-3">
+                    <Button variant="ghost" onClick={onClose}>Back to Dashboard</Button>
+                    <Button variant="primary" onClick={onJoinNow} icon={Video}>Go to Waiting Room</Button>
+                </div>
+            </div>
+        </div>
+    );
+};
+
+
+
+
+
+
 
 
               const ClassroomPage = ({ currentSession, guardianHint, handleEndSession }) => {
@@ -668,7 +709,7 @@ const BookingModal = ({ isOpen, onClose, teacher, onConfirm }) => {
           });
           
          // --- PAYMENT STATE ---
-         const [paymentOpen, setPaymentOpen] = useState(false);
+          const [paymentOpen, setPaymentOpen] = useState(false);
           const [paymentData, setPaymentData] = useState({ type: '', amount: 0, desc: '' });
           
           const openPayment = (type, amount, desc) => {
@@ -677,7 +718,7 @@ const BookingModal = ({ isOpen, onClose, teacher, onConfirm }) => {
           };
          
  // --- SUBSCRIPTION MANAGEMENT STATE ---
- const [cancelModalOpen, setCancelModalOpen] = useState(false);
+          const [cancelModalOpen, setCancelModalOpen] = useState(false);
           const [isCanceling, setIsCanceling] = useState(false);
 
           const handleCancelSubscription = () => {
@@ -718,6 +759,7 @@ const BookingModal = ({ isOpen, onClose, teacher, onConfirm }) => {
           const [menuOpen, setMenuOpen] = useState(false);
           const [selectedTeacher, setSelectedTeacher] = useState(null);
           const [bookingModalOpen, setBookingModalOpen] = useState(false);
+          const [bookingSuccessOpen, setBookingSuccessOpen] = useState(false);
           const [verifyStep, setVerifyStep] = useState(0); 
           const [bioText, setBioText] = useState("");
           const [storyIndex, setStoryIndex] = useState(0); 
@@ -859,7 +901,7 @@ const BookingModal = ({ isOpen, onClose, teacher, onConfirm }) => {
             // Deduct credits
             setUser(u => ({ ...u, credits: u.credits - selectedTeacher.cost, hoursLearned: u.hoursLearned + 1 }));
             
-            // Log transaction with TIME now
+            // Log transaction
             setTransactions(t => [{ 
                 id: Date.now(), 
                 type: 'spend', 
@@ -868,23 +910,13 @@ const BookingModal = ({ isOpen, onClose, teacher, onConfirm }) => {
                 date: new Date().toLocaleDateString() 
             }, ...t]);
             
-            setBookingModalOpen(false);
+            setBookingModalOpen(false); // Close date picker
             
+            // Set session data
             setCurrentSession({ host: selectedTeacher.name, topic: selectedTeacher.skill, isHost: false });
-            handleJoinSession();
-          };
 
-          const simulateVerification = () => {
-            setVerifyStep(1);
-            setTimeout(() => {
-              setVerifyStep(2);
-              setUser(u => ({ ...u, role: 'teacher' }));
-            }, 2000);
-          };
-
-          const handleJoinSession = () => {
-            setSessionStatus("waiting");
-            navigate('waiting-room');
+            // OPEN POPUP (Do not navigate yet)
+            setBookingSuccessOpen(true); 
           };
           
           const handleStartLiveSession = (e) => {
@@ -1839,179 +1871,8 @@ const PaymentGateway = ({ isOpen, onClose, data, onSuccess }) => {
               </div>
           );
           
-          const DashboardPage = () => {
-             const [activeTab, setActiveTab] = useState('overview'); // State for tabs
-             
-             // Calculate progress for the level bar
-             const currentLvl = LEVELS[user.level - 1] || LEVELS[0];
-             const nextLvl = LEVELS[user.level] || LEVELS[user.level-1];
-             const xpPercent = Math.min(100, (user.xp / nextLvl.minXp) * 100);
-
-             return (
-            <div className="pt-24 pb-12 px-4 animate-fade-in bg-gray-50 dark:bg-slate-900 min-h-screen">
-              <div className="max-w-7xl mx-auto">
-                
-                {/* Header Stats */}
-                <div className="grid grid-cols-1 md:grid-cols-4 gap-6 mb-8">
-                  <Card className="bg-gradient-to-br from-purple-600 to-indigo-700 text-white border-none">
-                    <div className="flex justify-between items-start">
-                      <div>
-                        <p className="text-purple-200 mb-1">Credit Balance</p>
-                        <h2 className={`text-4xl font-bold ${walletAnim ? 'animate-bounce-short' : ''}`}>{user.credits.toFixed(1)}</h2>
-                      </div>
-                      <div className="p-2 bg-white/20 rounded-lg"><DollarSign size={24} /></div>
-                    </div>
-                    <button onClick={() => navigate('wallet')} className="mt-4 text-sm bg-white/20 hover:bg-white/30 py-1 px-3 rounded-lg transition-colors w-full">Manage Wallet</button>
-                  </Card>
-
-                  <Card>
-                    <div className="flex justify-between items-start mb-2">
-                      <div>
-                        <p className="text-gray-500 dark:text-gray-400 text-sm">Level {user.level}</p>
-                        <h2 className="text-2xl font-bold text-gray-900 dark:text-white flex items-center gap-2">
-                          {currentLvl.icon} {currentLvl.title}
-                        </h2>
-                      </div>
-                      <div className="p-2 bg-green-100 text-green-600 rounded-lg"><Award size={20} /></div>
-                    </div>
-                    <div className="w-full bg-gray-200 rounded-full h-2.5 dark:bg-gray-700 mt-2">
-                      <div className="bg-green-500 h-2.5 rounded-full transition-all duration-1000 ease-out" style={{ width: `${xpPercent}%` }}></div>
-                    </div>
-                    <p className="text-xs text-gray-400 mt-2">{user.xp}/{nextLvl.minXp} XP to next level</p>
-                  </Card>
-
-                  <Card>
-                    <div className="flex justify-between items-start mb-2">
-                      <div>
-                        <p className="text-gray-500 dark:text-gray-400 text-sm">Hours Taught</p>
-                        <h2 className="text-2xl font-bold text-gray-900 dark:text-white">{user.hoursTaught}h</h2>
-                      </div>
-                      <div className="p-2 bg-blue-100 text-blue-600 rounded-lg"><Clock size={20} /></div>
-                    </div>
-                    <p className="text-xs text-green-500 mt-2 font-medium flex items-center gap-1"><TrendingUp size={12}/> +2h this week</p>
-                  </Card>
-                  
-                  <Card>
-                    <div className="flex justify-between items-start mb-2">
-                      <div>
-                        <p className="text-gray-500 dark:text-gray-400 text-sm">Hours Learned</p>
-                        <h2 className="text-2xl font-bold text-gray-900 dark:text-white">{user.hoursLearned}h</h2>
-                      </div>
-                      <div className="p-2 bg-orange-100 text-orange-600 rounded-lg"><BookOpen size={20} /></div>
-                    </div>
-                    <p className="text-xs text-gray-400 mt-2">Next session: Today, 4PM</p>
-                  </Card>
-                </div>
-                
-                {/* Tabs Navigation */}
-                <div className="flex gap-6 border-b border-gray-200 dark:border-slate-700 mb-8 overflow-x-auto">
-                  {['overview', 'schedule', 'history'].map((tab) => (
-                      <button 
-                        key={tab}
-                        onClick={() => setActiveTab(tab)}
-                        className={`pb-4 border-b-2 font-bold capitalize transition-colors ${
-                            activeTab === tab 
-                            ? 'border-purple-600 text-purple-600 dark:text-purple-400' 
-                            : 'border-transparent text-gray-500 hover:text-gray-700 dark:text-gray-400 dark:hover:text-gray-200'
-                        }`}
-                      >
-                        {tab}
-                      </button>
-                  ))}
-                </div>
-                
-                {/* 1. OVERVIEW CONTENT */}
-                {activeTab === 'overview' && (
-                     <div className="grid md:grid-cols-3 gap-8 animate-fade-in">
-                        <div className="md:col-span-2 space-y-6">
-                             {/* AI Assistant Card */}
-                             <Card className="border-2 border-pink-200 dark:border-pink-900/30 overflow-hidden relative">
-                                  <div className="absolute top-0 right-0 p-4 opacity-10">
-                                     <Sparkles size={120} className="text-pink-500"/>
-                                  </div>
-                                  <div className="relative z-10">
-                                     <h3 className="font-bold text-xl text-gray-900 dark:text-white flex items-center gap-2">
-                                       <Bot className="text-pink-500" /> AI Lesson Architect
-                                     </h3>
-                                     <p className="text-gray-600 dark:text-gray-400 mt-2 mb-4 max-w-lg">
-                                       Struggling to structure your next class? Enter a topic, and our Gemini AI will generate a perfect 1-hour lesson plan for you instantly.
-                                     </p>
-                                     <Button variant="ai" onClick={() => setAiModalOpen(true)} icon={Sparkles}>Launch Architect</Button>
-                                  </div>
-                             </Card>
-
-                            <Card>
-                              <h3 className="font-bold text-gray-900 dark:text-white mb-4">Upcoming Sessions</h3>
-                               <div className="space-y-4">
-                                {[1].map(i => (
-                                  <div key={i} className="flex items-center p-4 border border-gray-100 dark:border-slate-700 rounded-xl hover:bg-gray-50 dark:hover:bg-slate-700/50 transition-colors">
-                                     <div className="bg-purple-100 dark:bg-purple-900/30 p-3 rounded-lg text-center min-w-[60px]">
-                                       <div className="text-xs font-bold text-purple-600 dark:text-purple-300">TODAY</div>
-                                       <div className="text-xl font-bold text-gray-900 dark:text-white">Now</div>
-                                     </div>
-                                     <div className="ml-4 flex-grow">
-                                       <h4 className="font-bold text-gray-900 dark:text-white">Intro to Python with Marcus</h4>
-                                       <p className="text-sm text-gray-500">Video Call • 1hr</p>
-                                     </div>
-                                     <Button size="sm" variant="success" onClick={() => handleJoinSession("Marcus")}>Join</Button>
-                                  </div>
-                                ))}
-                              </div>
-                            </Card>
-                            
-                            <Card>
-                                <h3 className="font-bold text-gray-900 dark:text-white mb-4">Recommended for You</h3>
-                                <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                                   {TEACHERS.slice(0,2).map(t => (
-                                     <div key={t.id} onClick={() => {setSelectedTeacher(t); setBookingModalOpen(true);}} className="cursor-pointer border border-gray-100 dark:border-slate-700 rounded-lg p-3 flex items-center gap-3 hover:shadow-md transition-all">
-                                        <img src={t.img} className="w-10 h-10 rounded-full"/>
-                                        <div className="overflow-hidden">
-                                          <p className="font-bold truncate text-gray-900 dark:text-white">{t.skill}</p>
-                                          <p className="text-xs text-gray-500">with {t.name}</p>
-                                        </div>
-                                     </div>
-                                   ))}
-                                </div>
-                            </Card>
-                        </div>
-                        
-                        <div className="space-y-6">
-                             <Card className="bg-yellow-50 dark:bg-yellow-900/10 border-yellow-200 dark:border-yellow-900/30">
-                               <h3 className="font-bold text-yellow-800 dark:text-yellow-500 mb-2">Complete Profile</h3>
-                               <p className="text-sm text-yellow-700 dark:text-yellow-600 mb-4">Add a bio and social links to reach 100% and earn 1 Credit.</p>
-                               <div className="w-full bg-yellow-200 rounded-full h-2 mb-4">
-                                 <div className="bg-yellow-500 h-2 rounded-full" style={{ width: '70%' }}></div>
-                               </div>
-                               <Button variant="secondary" className="w-full py-2 text-sm" onClick={() => navigate('teach')}>Edit Profile</Button>
-                             </Card>
-
-                             <Card>
-                               <h3 className="font-bold text-gray-900 dark:text-white mb-4">Achievements</h3>
-                               <div className="grid grid-cols-3 gap-2">
-                                 {['🥇', '🛡️', '🐷'].map((icon, i) => (
-                                   <div key={i} className="w-10 h-10 rounded-full bg-gray-100 dark:bg-slate-700 flex items-center justify-center text-xl cursor-help hover:scale-110 transition-transform">{icon}</div>
-                                 ))}
-                               </div>
-                             </Card>
-                        </div>
-                     </div>
-                 )}
-
-                 {/* 2. SCHEDULE CONTENT */}
-                 {activeTab === 'schedule' && <ScheduleTab />}
-
-                 {/* 3. HISTORY CONTENT */}
-                 {activeTab === 'history' && <HistoryTab />}
-
-              </div>
-            </div>
-            );
-          
-             // --- DASHBOARD TAB CONTENTS ---
-             
-             // --- DASHBOARD TAB CONTENT COMPONENTS (Must be defined BEFORE DashboardPage) ---
-          
-          const ScheduleTab = () => (
+// --- DASHBOARD TAB COMPONENTS ---
+const ScheduleTab = () => (
               <div className="space-y-6 animate-fade-in">
                   <div className="flex justify-between items-center">
                       <h3 className="font-bold text-gray-900 dark:text-white text-xl">Your Upcoming Sessions</h3>
@@ -2087,7 +1948,6 @@ const PaymentGateway = ({ isOpen, onClose, data, onSuccess }) => {
           );
 
           // --- MAIN DASHBOARD PAGE COMPONENT ---
-
           const DashboardPage = () => {
              const [activeTab, setActiveTab] = useState('overview');
              
@@ -2173,6 +2033,22 @@ const PaymentGateway = ({ isOpen, onClose, data, onSuccess }) => {
                 {activeTab === 'overview' && (
                      <div className="grid md:grid-cols-3 gap-8 animate-fade-in">
                         <div className="md:col-span-2 space-y-6">
+                            {/* Pro Status Card */}
+                            {user.isPro && (
+                                <Card className="bg-gradient-to-r from-yellow-500/20 to-orange-500/20 border-yellow-500/50">
+                                    <div className="flex items-center gap-4">
+                                        <div className="p-3 bg-yellow-500 text-white rounded-full shadow-lg shadow-yellow-500/50">
+                                            <Star size={24} fill="currentColor"/>
+                                        </div>
+                                        <div>
+                                            <h3 className="text-xl font-bold text-gray-900 dark:text-white">Pro Member Active</h3>
+                                            <p className="text-gray-600 dark:text-gray-300 text-sm">You have access to fast matching, AI recording, and priority support.</p>
+                                        </div>
+                                    </div>
+                                </Card>
+                            )}
+
+                             {/* AI Assistant Card */}
                              <Card className="border-2 border-pink-200 dark:border-pink-900/30 overflow-hidden relative">
                                   <div className="absolute top-0 right-0 p-4 opacity-10">
                                      <Sparkles size={120} className="text-pink-500"/>
@@ -2256,170 +2132,6 @@ const PaymentGateway = ({ isOpen, onClose, data, onSuccess }) => {
             );
           };
 
-
-
-
-
-             return (
-            <div className="pt-24 pb-12 px-4 animate-fade-in bg-gray-50 dark:bg-slate-900 min-h-screen">
-              <div className="max-w-7xl mx-auto">
-                
-                {/* Header Stats */}
-                <div className="grid grid-cols-1 md:grid-cols-4 gap-6 mb-8">
-                  <Card className="bg-gradient-to-br from-purple-600 to-indigo-700 text-white border-none">
-                    <div className="flex justify-between items-start">
-                      <div>
-                        <p className="text-purple-200 mb-1">Credit Balance</p>
-                        <h2 className={`text-4xl font-bold ${walletAnim ? 'animate-bounce-short' : ''}`}>{user.credits.toFixed(1)}</h2>
-                      </div>
-                      <div className="p-2 bg-white/20 rounded-lg"><DollarSign size={24} /></div>
-                    </div>
-                    <button onClick={() => navigate('wallet')} className="mt-4 text-sm bg-white/20 hover:bg-white/30 py-1 px-3 rounded-lg transition-colors w-full">Manage Wallet</button>
-                  </Card>
-
-                  <Card>
-                    <div className="flex justify-between items-start mb-2">
-                      <div>
-                        <p className="text-gray-500 dark:text-gray-400 text-sm">Level {user.level}</p>
-                        <h2 className="text-2xl font-bold text-gray-900 dark:text-white flex items-center gap-2">
-                          {currentLvl.icon} {currentLvl.title}
-                        </h2>
-                      </div>
-                      <div className="p-2 bg-green-100 text-green-600 rounded-lg"><Award size={20} /></div>
-                    </div>
-                    <div className="w-full bg-gray-200 rounded-full h-2.5 dark:bg-gray-700 mt-2">
-                      <div className="bg-green-500 h-2.5 rounded-full transition-all duration-1000 ease-out" style={{ width: `${xpPercent}%` }}></div>
-                    </div>
-                    <p className="text-xs text-gray-400 mt-2">{user.xp}/{nextLvl.minXp} XP to next level</p>
-                  </Card>
-
-                  {/* ... other stats ... */}
-                  <Card>
-                    <div className="flex justify-between items-start mb-2">
-                      <div>
-                        <p className="text-gray-500 dark:text-gray-400 text-sm">Hours Taught</p>
-                        <h2 className="text-2xl font-bold text-gray-900 dark:text-white">{user.hoursTaught}h</h2>
-                      </div>
-                      <div className="p-2 bg-blue-100 text-blue-600 rounded-lg"><Clock size={20} /></div>
-                    </div>
-                    <p className="text-xs text-green-500 mt-2 font-medium flex items-center gap-1"><TrendingUp size={12}/> +2h this week</p>
-                  </Card>
-                  
-                  <Card>
-                    <div className="flex justify-between items-start mb-2">
-                      <div>
-                        <p className="text-gray-500 dark:text-gray-400 text-sm">Hours Learned</p>
-                        <h2 className="text-2xl font-bold text-gray-900 dark:text-white">{user.hoursLearned}h</h2>
-                      </div>
-                      <div className="p-2 bg-orange-100 text-orange-600 rounded-lg"><BookOpen size={20} /></div>
-                    </div>
-                    <p className="text-xs text-gray-400 mt-2">Next session: Today, 4PM</p>
-                  </Card>
-                </div>
-                
-                {/* Tabs */}
-                <div className="flex gap-6 border-b border-gray-200 dark:border-slate-700 mb-8">
-                  <button className="pb-4 border-b-2 border-purple-600 font-bold text-purple-600">Overview</button>
-                  <button className="pb-4 border-b-2 border-transparent hover:border-gray-300 text-gray-500 dark:text-gray-400">Schedule</button>
-                  <button className="pb-4 border-b-2 border-transparent hover:border-gray-300 text-gray-500 dark:text-gray-400">History</button>
-                </div>
-
-
-                <div className="flex gap-6 border-b border-gray-200 dark:border-slate-700 mb-8 overflow-x-auto">
-                  {['overview', 'schedule', 'history'].map((tab) => (
-                      <button 
-                        key={tab}
-                        onClick={() => setActiveTab(tab)}
-                        className={`pb-4 border-b-2 font-bold capitalize transition-colors ${
-                            activeTab === tab 
-                            ? 'border-purple-600 text-purple-600 dark:text-purple-400' 
-                            : 'border-transparent text-gray-500 hover:text-gray-700 dark:text-gray-400 dark:hover:text-gray-200'
-                        }`}
-                      >
-                        {tab}
-                      </button>
-                  ))}
-                </div>
-                
-                 {/* ... content grid ... */}
-                 <div className="grid md:grid-cols-3 gap-8">
-                  <div className="md:col-span-2 space-y-6">
-                    {/* AI Assistant Card */}
-                    <Card className="border-2 border-pink-200 dark:border-pink-900/30 overflow-hidden relative">
-                      <div className="absolute top-0 right-0 p-4 opacity-10">
-                         <Sparkles size={120} className="text-pink-500"/>
-                      </div>
-                      <div className="relative z-10">
-                         <h3 className="font-bold text-xl text-gray-900 dark:text-white flex items-center gap-2">
-                           <Bot className="text-pink-500" /> AI Lesson Architect
-                         </h3>
-                         <p className="text-gray-600 dark:text-gray-400 mt-2 mb-4 max-w-lg">
-                           Struggling to structure your next class? Enter a topic, and our Gemini AI will generate a perfect 1-hour lesson plan for you instantly.
-                         </p>
-                         <Button variant="ai" onClick={() => setAiModalOpen(true)} icon={Sparkles}>Launch Architect</Button>
-                      </div>
-                    </Card>
-
-                    <Card>
-                      <h3 className="font-bold text-gray-900 dark:text-white mb-4">Upcoming Sessions</h3>
-                      <div className="space-y-4">
-                        {[1].map(i => (
-                          <div key={i} className="flex items-center p-4 border border-gray-100 dark:border-slate-700 rounded-xl hover:bg-gray-50 dark:hover:bg-slate-700/50 transition-colors">
-                             <div className="bg-purple-100 dark:bg-purple-900/30 p-3 rounded-lg text-center min-w-[60px]">
-                               <div className="text-xs font-bold text-purple-600 dark:text-purple-300">TODAY</div>
-                               <div className="text-xl font-bold text-gray-900 dark:text-white">Now</div>
-                             </div>
-                             <div className="ml-4 flex-grow">
-                               <h4 className="font-bold text-gray-900 dark:text-white">Intro to Python with Marcus</h4>
-                               <p className="text-sm text-gray-500">Video Call • 1hr</p>
-                             </div>
-                             <Button size="sm" variant="success" onClick={() => handleJoinSession("Marcus")}>Join</Button>
-                          </div>
-                        ))}
-                      </div>
-                    </Card>
-                    
-                    <Card>
-                      <h3 className="font-bold text-gray-900 dark:text-white mb-4">Recommended for You</h3>
-                      <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                         {TEACHERS.slice(0,2).map(t => (
-                           <div key={t.id} onClick={() => {setSelectedTeacher(t); setBookingModalOpen(true);}} className="cursor-pointer border border-gray-100 dark:border-slate-700 rounded-lg p-3 flex items-center gap-3 hover:shadow-md transition-all">
-                              <img src={t.img} className="w-10 h-10 rounded-full"/>
-                              <div className="overflow-hidden">
-                                <p className="font-bold truncate text-gray-900 dark:text-white">{t.skill}</p>
-                                <p className="text-xs text-gray-500">with {t.name}</p>
-                              </div>
-                           </div>
-                         ))}
-                      </div>
-                    </Card>
-                  </div>
-                  
-                  <div className="space-y-6">
-                     <Card className="bg-yellow-50 dark:bg-yellow-900/10 border-yellow-200 dark:border-yellow-900/30">
-                       <h3 className="font-bold text-yellow-800 dark:text-yellow-500 mb-2">Complete Profile</h3>
-                       <p className="text-sm text-yellow-700 dark:text-yellow-600 mb-4">Add a bio and social links to reach 100% and earn 1 Credit.</p>
-                       <div className="w-full bg-yellow-200 rounded-full h-2 mb-4">
-                         <div className="bg-yellow-500 h-2 rounded-full" style={{ width: '70%' }}></div>
-                       </div>
-                       <Button variant="secondary" className="w-full py-2 text-sm" onClick={() => navigate('teach')}>Edit Profile</Button>
-                     </Card>
-
-                     <Card>
-                       <h3 className="font-bold text-gray-900 dark:text-white mb-4">Achievements</h3>
-                       <div className="grid grid-cols-3 gap-2">
-                         {['🥇', '🛡️', '🐷'].map((icon, i) => (
-                           <div key={i} className="w-10 h-10 rounded-full bg-gray-100 dark:bg-slate-700 flex items-center justify-center text-xl cursor-help hover:scale-110 transition-transform">{icon}</div>
-                         ))}
-                       </div>
-                     </Card>
-                  </div>
-                 </div>
-              </div>
-            </div>
-            );
-          };
-          
           const CreditsMarketplacePage = () => (
             <div className="pt-24 pb-12 px-4 animate-fade-in min-h-screen bg-gray-50 dark:bg-slate-900">
                 <Section>
@@ -2440,10 +2152,9 @@ const PaymentGateway = ({ isOpen, onClose, data, onSuccess }) => {
                     </div>
                 </div>
 
-                {/* NEW: Pro Subscription Box */}
+                {/* Pro Subscription Box */}
                 <div className="max-w-4xl mx-auto mb-12 animate-fade-in">
                     <div className="bg-gradient-to-r from-gray-900 to-slate-800 text-white rounded-2xl p-6 shadow-xl border border-yellow-500/50 relative overflow-hidden flex flex-col md:flex-row items-center justify-between gap-6">
-                        {/* Background Glow */}
                         <div className="absolute top-0 right-0 w-64 h-64 bg-yellow-500/10 rounded-full blur-3xl -mr-16 -mt-16 pointer-events-none"></div>
 
                         <div className="relative z-10">
@@ -2461,21 +2172,21 @@ const PaymentGateway = ({ isOpen, onClose, data, onSuccess }) => {
                             </div>
                         </div>
                         {user.isPro ? (
-        <button 
-            onClick={() => setCancelModalOpen(true)}
-            className="bg-slate-800/80 hover:bg-slate-700 text-white px-6 py-3 rounded-xl font-bold border border-yellow-500/50 flex items-center gap-2 transition-colors shadow-lg"
-        >
-            <CheckCircle className="text-yellow-400" /> Manage Subscription
-        </button>
-    ) : (
-    <Button 
-        onClick={() => openPayment('subscription', 4.99, 'Pro Membership')} 
-        variant="secondary" 
-        className="whitespace-nowrap shadow-[0_0_20px_rgba(234,179,8,0.3)] hover:shadow-[0_0_30px_rgba(234,179,8,0.5)] transition-shadow"
-    >
-        Subscribe for $4.99
-    </Button>
-)}
+                            <button 
+                                onClick={() => setCancelModalOpen(true)}
+                                className="bg-slate-800/80 hover:bg-slate-700 text-white px-6 py-3 rounded-xl font-bold border border-yellow-500/50 flex items-center gap-2 transition-colors shadow-lg"
+                            >
+                                <CheckCircle className="text-yellow-400" /> Manage Subscription
+                            </button>
+                        ) : (
+                            <Button 
+                                onClick={() => openPayment('subscription', 4.99, 'Pro Membership')} 
+                                variant="secondary" 
+                                className="whitespace-nowrap shadow-[0_0_20px_rgba(234,179,8,0.3)] hover:shadow-[0_0_30px_rgba(234,179,8,0.5)] transition-shadow"
+                            >
+                                Subscribe for $4.99
+                            </Button>
+                        )}
                         
                     </div>
                 </div>
@@ -2612,9 +2323,7 @@ const PaymentGateway = ({ isOpen, onClose, data, onSuccess }) => {
           
           const TheLoopPage = () => (
              <div className="animate-fade-in min-h-screen bg-slate-950 text-white font-sans">
-                 {/* ... header ... */}
                  <Section className="relative z-10 pt-32">
-                     {/* ... title section ... */}
                      <div className="text-center max-w-5xl px-4 mx-auto mb-20">
                          <div className="inline-block mb-6 animate-slide-up">
                             <div className="flex items-center gap-2 px-4 py-1.5 rounded-full border border-purple-500/30 bg-purple-500/10 backdrop-blur-md">
@@ -2646,7 +2355,6 @@ const PaymentGateway = ({ isOpen, onClose, data, onSuccess }) => {
                                 </div>
                                 <h3 className="text-2xl font-bold mb-2">{step.title}</h3>
                                 <p className="text-slate-400 text-sm">{step.desc}</p>
-                                {/* Mobile connector */}
                                 <div className="md:hidden mt-6 flex justify-center text-slate-600">
                                 <ArrowDown size={20} />
                                 </div>
@@ -2656,7 +2364,6 @@ const PaymentGateway = ({ isOpen, onClose, data, onSuccess }) => {
                     </div>
                  </Section>
                  
-                 {/* 3. Viral Growth Loop */}
               <Section className="bg-slate-900/50 border-y border-slate-800">
                 <div className="grid md:grid-cols-2 gap-16 items-center">
                   <div className="order-2 md:order-1 relative">
@@ -2697,7 +2404,6 @@ const PaymentGateway = ({ isOpen, onClose, data, onSuccess }) => {
                 </div>
               </Section>
 
-              {/* 4. The Credit Economy */}
               <Section>
                 <div className="text-center mb-16">
                   <h2 className="text-3xl font-bold mb-4">Tokenized Time Economy</h2>
@@ -2723,7 +2429,6 @@ const PaymentGateway = ({ isOpen, onClose, data, onSuccess }) => {
                 </div>
               </Section>
 
-              {/* 5. Progression Loop */}
               <Section className="bg-gradient-to-b from-slate-900 to-slate-950">
                  <div className="max-w-4xl mx-auto bg-slate-800/50 border border-slate-700 rounded-3xl p-8 md:p-12">
                     <div className="flex flex-col md:flex-row items-center gap-8 mb-8">
@@ -2742,7 +2447,6 @@ const PaymentGateway = ({ isOpen, onClose, data, onSuccess }) => {
                       </div>
                     </div>
                     
-                    {/* XP Bar */}
                     <div className="relative h-6 bg-slate-900 rounded-full overflow-hidden mb-4">
                        <div className="absolute top-0 left-0 h-full bg-gradient-to-r from-purple-600 to-yellow-500 w-[75%] shadow-[0_0_20px_rgba(168,85,247,0.5)]"></div>
                     </div>
@@ -2754,7 +2458,6 @@ const PaymentGateway = ({ isOpen, onClose, data, onSuccess }) => {
                  </div>
               </Section>
               
-              {/* 6. Why it Scales */}
               <Section>
                  <div className="grid md:grid-cols-2 gap-12 max-w-5xl mx-auto items-center">
                    <div>
@@ -2802,7 +2505,6 @@ const PaymentGateway = ({ isOpen, onClose, data, onSuccess }) => {
                  </div>
               </Section>
 
-              {/* 7. CTA */}
               <Section className="text-center py-32">
                  <h2 className="text-3xl md:text-5xl font-bold mb-8">Invest in the Future of Learning</h2>
                  <Button variant="secondary" size="lg" className="text-lg px-10 py-4 shadow-[0_0_40px_rgba(234,179,8,0.3)] hover:shadow-[0_0_60px_rgba(234,179,8,0.5)]" onClick={() => navigate('investor')}>
@@ -2825,7 +2527,6 @@ const PaymentGateway = ({ isOpen, onClose, data, onSuccess }) => {
                   </p>
                 </div>
 
-                {/* Metrics Grid */}
                 <div className="grid md:grid-cols-4 gap-6 mb-16">
                   {[
                     { label: "TAM", value: "$350B", sub: "Global E-Learning" },
@@ -2841,7 +2542,6 @@ const PaymentGateway = ({ isOpen, onClose, data, onSuccess }) => {
                   ))}
                 </div>
 
-                {/* Two Column Pitch */}
                 <div className="grid lg:grid-cols-2 gap-16 items-center mb-20">
                    <div>
                      <h2 className="text-3xl font-bold text-gray-900 dark:text-white mb-6">The Problem: Education is Gatekept</h2>
@@ -2882,7 +2582,6 @@ const PaymentGateway = ({ isOpen, onClose, data, onSuccess }) => {
                    </div>
                 </div>
 
-                {/* The AI Moat - Old One */}
                 <div className="mb-20 bg-gradient-to-r from-indigo-900 to-purple-900 rounded-3xl p-12 text-center text-white relative overflow-hidden">
                    <div className="relative z-10">
                      <Badge color="pink">The Technology Moat</Badge>
@@ -2907,7 +2606,6 @@ const PaymentGateway = ({ isOpen, onClose, data, onSuccess }) => {
                    </div>
                 </div>
 
-                {/* Unit Economics */}
                 <div className="grid md:grid-cols-3 gap-8 mb-16">
                    <Card key="ltv" className="text-center">
                      <h3 className="text-gray-500 font-bold mb-2">Lifetime Value</h3>
@@ -2926,14 +2624,12 @@ const PaymentGateway = ({ isOpen, onClose, data, onSuccess }) => {
                    </Card>
                 </div>
                 
-                {/* New AI Innovation CTA */}
                 <div className="text-center mb-16">
                     <Button variant="ai" size="lg" icon={Sparkles} onClick={() => navigate('ai-innovation')}>
                         View Our Full AI Innovation Deck
                     </Button>
                 </div>
 
-                {/* Contact Form */}
                 <div className="max-w-2xl mx-auto text-center">
                    <h2 className="text-3xl font-bold text-gray-900 dark:text-white mb-8">Join Our $1.5M Seed Round</h2>
                    <Card className="p-8 text-left">
@@ -2959,7 +2655,6 @@ const PaymentGateway = ({ isOpen, onClose, data, onSuccess }) => {
             </div>
           );
           
-          // --- NEW: AI Innovation Page ---
           const AIInnovationPage = () => (
              <div className="pt-24 pb-12 px-4 animate-fade-in min-h-screen bg-slate-900 text-white">
                 <Section className="text-center">
@@ -2971,7 +2666,6 @@ const PaymentGateway = ({ isOpen, onClose, data, onSuccess }) => {
                     </p>
                 </Section>
                 
-                {/* Section 1: AI Practice Engine (Post-Lesson) */}
                 <Section className="bg-slate-800/50 rounded-3xl mb-12">
                    <div className="grid md:grid-cols-2 gap-12 items-center">
                       <div>
@@ -2992,7 +2686,6 @@ const PaymentGateway = ({ isOpen, onClose, data, onSuccess }) => {
                           </ul>
                       </div>
                       
-                      {/* Animation Mockup */}
                       <div className="relative p-6 bg-slate-900 rounded-xl shadow-2xl">
                           <h4 className="font-bold text-gray-300 mb-4">Mastery Progress: Intro to Python</h4>
                           <div className="h-40 p-4 bg-slate-800 rounded-lg flex flex-col justify-end">
@@ -3019,15 +2712,11 @@ const PaymentGateway = ({ isOpen, onClose, data, onSuccess }) => {
                    </div>
                 </Section>
 
-                {/* Section 2: Predictive Mistake Prevention (In-Session) */}
                 <Section className="bg-slate-900/50 rounded-3xl mb-12 border border-slate-800">
                     <div className="grid md:grid-cols-2 gap-12 items-center">
-                      {/* Animation Mockup */}
                       <div className="relative p-6 bg-gray-800 rounded-xl shadow-2xl">
                           <div className="relative bg-black aspect-video rounded-lg overflow-hidden flex items-center justify-center">
-                              <video autoPlay loop muted className="w-full h-full object-cover opacity-70">
-                                {/* Placeholder for Camera Feed (Visual Effect) */}
-                              </video>
+                              <video autoPlay loop muted className="w-full h-full object-cover opacity-70"></video>
                               <div className="absolute inset-0 border-4 border-dashed border-purple-500 animate-ping-slow rounded-lg opacity-30"></div>
                               <div className="absolute top-4 left-4 p-2 bg-red-600 text-white rounded-lg text-xs font-bold flex items-center gap-2 animate-fade-in">
                                  <AlertTriangle size={16}/> Speech Pattern Alert
@@ -3060,7 +2749,6 @@ const PaymentGateway = ({ isOpen, onClose, data, onSuccess }) => {
                     </div>
                 </Section>
                 
-                {/* Section 3: Why This Beats Competitors */}
                 <Section>
                    <h2 className="text-3xl font-bold text-center mb-10">Unmatched Value: The ExchangeU Edge</h2>
                    
@@ -3116,7 +2804,6 @@ const PaymentGateway = ({ isOpen, onClose, data, onSuccess }) => {
                    </div>
                 </Section>
                 
-                {/* Section 4: Vision */}
                 <Section className="text-center bg-slate-800/50 rounded-3xl">
                    <h2 className="text-3xl font-bold mb-4">Our Vision: True Universal Education</h2>
                    <p className="text-gray-300 max-w-3xl mx-auto text-lg mb-8">
@@ -3141,10 +2828,8 @@ const PaymentGateway = ({ isOpen, onClose, data, onSuccess }) => {
              </div>
           );
 
-
           const SessionWaitingPage = () => (
             <div className="pt-24 pb-12 px-4 animate-fade-in min-h-screen bg-gray-900 flex flex-col items-center justify-center relative overflow-hidden">
-               {/* Background Effects */}
                <div className="absolute inset-0 overflow-hidden">
                  <div className="absolute top-1/4 left-1/4 w-96 h-96 bg-purple-600/20 rounded-full blur-3xl animate-pulse"></div>
                  <div className="absolute bottom-1/4 right-1/4 w-96 h-96 bg-blue-600/20 rounded-full blur-3xl animate-pulse delay-1000"></div>
@@ -3223,7 +2908,6 @@ const PaymentGateway = ({ isOpen, onClose, data, onSuccess }) => {
                     </div>
                  </div>
                  
-                 {/* Success Stories */}
                  <div className="border-t border-gray-800 pt-8 animate-slide-up">
                     <div className="flex items-center gap-2 mb-6 text-gray-500 text-sm font-bold uppercase tracking-widest">
                       <Sparkles size={14} className="text-yellow-500"/> Success Stories
@@ -3253,16 +2937,13 @@ const PaymentGateway = ({ isOpen, onClose, data, onSuccess }) => {
                </div>
             </div>
           );
-          
-          
-          // --- NEW: PostSessionAIReviewPage ---
+
           const PostSessionAIReviewPage = () => {
               const [rating, setRating] = useState(0);
               const [aiResult, setAiResult] = useState(null);
               const [aiLoading, setAiLoading] = useState(true);
               
               useEffect(() => {
-                  // Simulate AI generation delay
                   const timer = setTimeout(() => {
                       setAiResult(reviewSessionData);
                       setAiLoading(false);
@@ -3274,7 +2955,6 @@ const PaymentGateway = ({ isOpen, onClose, data, onSuccess }) => {
 
               const completedTasks = reviewSessionData.homework.filter(h => h.completed).length;
               const totalTasks = reviewSessionData.homework.length;
-              const homeworkPercent = totalTasks > 0 ? (completedTasks / totalTasks) * 100 : 0;
               
               return (
                   <div className="pt-24 pb-12 px-4 animate-fade-in min-h-screen bg-gray-50 dark:bg-slate-900">
@@ -3295,7 +2975,6 @@ const PaymentGateway = ({ isOpen, onClose, data, onSuccess }) => {
                              </Card>
                           ) : (
                               <div className="space-y-6">
-                                  {/* Metrics Grid */}
                                   <div className="grid md:grid-cols-3 gap-6">
                                      <Card className="text-center">
                                          <p className="text-sm text-gray-500">Mastery Score</p>
@@ -3314,7 +2993,6 @@ const PaymentGateway = ({ isOpen, onClose, data, onSuccess }) => {
                                      </Card>
                                   </div>
                                   
-                                  {/* AI Summary and Key Concepts */}
                                   <Card hoverEffect={false}>
                                       <h3 className="font-bold text-xl dark:text-white mb-3 flex items-center gap-2"><Bot size={20} className="text-pink-500"/> AI Summary</h3>
                                       <p className="text-gray-700 dark:text-gray-300 italic mb-4">"{reviewSessionData.summary}"</p>
@@ -3330,7 +3008,6 @@ const PaymentGateway = ({ isOpen, onClose, data, onSuccess }) => {
                                       </ul>
                                   </Card>
 
-                                  {/* AI Homework Generator */}
                                   <Card hoverEffect={false}>
                                       <h3 className="font-bold text-xl dark:text-white mb-3 flex items-center gap-2"><CheckSquare size={20} className="text-blue-500"/> AI-Generated Homework</h3>
                                       <div className="space-y-3">
@@ -3346,7 +3023,6 @@ const PaymentGateway = ({ isOpen, onClose, data, onSuccess }) => {
                                       </div>
                                   </Card>
                                   
-                                  {/* Next Steps & Review */}
                                   <Card hoverEffect={false}>
                                       <h3 className="font-bold text-xl dark:text-white mb-3 flex items-center gap-2"><ArrowRight size={20} className="text-purple-500"/> Next Steps</h3>
                                       <ul className="space-y-2 text-gray-700 dark:text-gray-300 list-disc list-inside">
@@ -3374,7 +3050,7 @@ const PaymentGateway = ({ isOpen, onClose, data, onSuccess }) => {
                   </div>
               );
           };
-          
+
           const HowToLearnPage = () => (
             <div className="pt-24 pb-12 px-4 animate-fade-in min-h-screen bg-gray-50 dark:bg-slate-900">
                <Section>
@@ -3412,10 +3088,7 @@ const PaymentGateway = ({ isOpen, onClose, data, onSuccess }) => {
             </div>
           );
 
-
-
-
-          // --- RENDER ---
+          // --- MAIN APP RENDER ---
           return (
             <div className={`${darkMode ? 'dark' : ''} min-h-screen flex flex-col`}>
               <div className="flex-grow bg-white dark:bg-slate-900 transition-colors duration-300">
@@ -3424,7 +3097,6 @@ const PaymentGateway = ({ isOpen, onClose, data, onSuccess }) => {
                 {showLevelUp && (
                     <div className="fixed inset-0 z-[100] flex items-center justify-center bg-black/80 backdrop-blur-md animate-fade-in">
                         <div className="text-center relative">
-                            {/* CSS Confetti would go here */}
                             <div className="absolute -top-20 left-1/2 -translate-x-1/2 text-6xl animate-bounce">🎉</div>
                             <h2 className="text-5xl font-black text-transparent bg-clip-text bg-gradient-to-r from-yellow-400 to-orange-500 mb-4 animate-scale-in">LEVEL UP!</h2>
                             <p className="text-2xl text-white font-bold mb-8">You are now a {LEVELS[user.level-1].title}</p>
@@ -3445,11 +3117,7 @@ const PaymentGateway = ({ isOpen, onClose, data, onSuccess }) => {
                   <div className="max-w-7xl mx-auto px-4 md:px-8">
                     <div className="flex items-center justify-between h-16">
                       <div className="flex items-center gap-2 cursor-pointer" onClick={() => navigate('landing')}>
-                        <img 
-    src="https://raw.githubusercontent.com/FalconFo/ExchangeU/98e1c054db4b08203f6525bd639711fb16822968/logoIMG.png" 
-    alt="ExchangeU" 
-    className="w-10 h-10 rounded-lg object-contain" 
-/>
+                        <img src="https://raw.githubusercontent.com/FalconFo/ExchangeU/98e1c054db4b08203f6525bd639711fb16822968/logoIMG.png" alt="ExchangeU" className="w-10 h-10 rounded-lg object-contain" />
                         <span className="text-xl font-bold text-gray-900 dark:text-white tracking-tight">Exchange<span className="text-yellow-500">U</span></span>
                       </div>
                       <div className="hidden md:flex items-center gap-8">
@@ -3509,7 +3177,6 @@ const PaymentGateway = ({ isOpen, onClose, data, onSuccess }) => {
                         <button onClick={() => navigate('wallet')} className="text-left py-2 px-4 hover:bg-gray-50 dark:hover:bg-slate-800 rounded-lg dark:text-white">Wallet</button>
                         <button onClick={() => { handleLogout(); setMenuOpen(false); }} className="text-left py-2 px-4 hover:bg-red-50 dark:hover:bg-red-900/20 rounded-lg text-red-500 font-bold flex items-center gap-2 mt-2 border-t border-gray-100 dark:border-slate-800 pt-4"><LogOut size={16}/> Log Out</button>
                         <button onClick={() => navigate('investor')} className="text-left py-2 px-4 hover:bg-gray-50 dark:hover:bg-slate-800 rounded-lg dark:text-white">Investors</button>
-                        {/* MOBILE AUTH BUTTONS */}
                        <div className="grid grid-cols-2 gap-3 mt-4 pt-4 border-t border-gray-100 dark:border-slate-800">
                       <Button onClick={() => { navigate('login'); setMenuOpen(false); }} variant="ghost" className="justify-center">Log In</Button>
                       <Button onClick={() => { navigate('signup'); setMenuOpen(false); }} variant="primary" className="justify-center">Sign Up</Button>
@@ -3533,59 +3200,104 @@ const PaymentGateway = ({ isOpen, onClose, data, onSuccess }) => {
                   {page === 'investor' && <InvestorPage />}
                   {page === 'loop' && <TheLoopPage />}
                   {page === 'how-to-learn' && <HowToLearnPage />}
-                  {page === 'ai-innovation' && <AIInnovationPage />} {/* New Page */}
+                  {page === 'ai-innovation' && <AIInnovationPage />}
                   {page === 'waiting-room' && <SessionWaitingPage />}
                   {page === 'classroom' && (
-    <ClassroomPage 
-        currentSession={currentSession} 
-        guardianHint={guardianHint} 
-        handleEndSession={handleEndSession} 
-    />
-)}
-                  {page === 'ai-review' && <PostSessionAIReviewPage />} {/* New Page (Replaces post-session) */}
+                    <ClassroomPage 
+                        currentSession={currentSession} 
+                        guardianHint={guardianHint} 
+                        handleEndSession={handleEndSession} 
+                    />
+                  )}
+                  {page === 'ai-review' && <PostSessionAIReviewPage />}
                   {page === 'login' && <LoginPage />}
                   {page === 'signup' && <SignupPage />}
                 </main>
                 
-                {/* Payment Gateway Placebo */}
+                {/* Modals & Overlays */}
                 <PaymentGateway 
                 isOpen={paymentOpen} 
                 onClose={() => setPaymentOpen(false)} 
                 data={paymentData} 
                 onSuccess={handlePaymentSuccess} 
-/>             
-                  {/* ... existing code ... */}
+                />              
                   <CancelSubscriptionModal
                   isOpen={cancelModalOpen}
                   onClose={() => setCancelModalOpen(false)}
                   onConfirm={handleCancelSubscription}
                   loading={isCanceling}
-/>
-<ChatWindow 
-    open={chatOpen} 
-    activeUser={activeChatUser} 
-    messages={chatMessages} 
-    onSend={handleSendChat} 
-    onClose={() => setChatOpen(false)} 
-/>
+                />
+                <ChatWindow 
+                    open={chatOpen} 
+                    activeUser={activeChatUser} 
+                    messages={chatMessages} 
+                    onSend={handleSendChat} 
+                    onClose={() => setChatOpen(false)} 
+                />
+                 <BookingModal 
+                    isOpen={bookingModalOpen} 
+                    onClose={() => setBookingModalOpen(false)} 
+                    teacher={selectedTeacher} 
+                    onConfirm={(slot) => handleBookSession(slot)} 
+                />
 
+                <BookingSuccessModal 
+                    isOpen={bookingSuccessOpen} 
+                    onClose={() => setBookingSuccessOpen(false)} 
+                    teacher={selectedTeacher} 
+                    session={currentSession} 
+                    onJoinNow={() => {
+                        setBookingSuccessOpen(false);
+                        handleJoinSession(); 
+                    }}
+                />
 
-
-                    
-
-
-
-                 {/* Footer - Hide in Classroom */}
+                 {aiModalOpen && (
+                    <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/60 backdrop-blur-sm">
+                      <div className="bg-white dark:bg-slate-800 rounded-2xl w-full max-w-lg shadow-2xl p-6 max-h-[90vh] flex flex-col">
+                        <div className="flex justify-between items-center mb-4">
+                            <h3 className="text-xl font-bold dark:text-white">AI Lesson Architect</h3>
+                            <button onClick={() => { setAiModalOpen(false); setAiResult(""); setAiTopic(""); }}><XIcon/></button>
+                        </div>
+                         {!aiResult ? (
+                             <div className="space-y-6">
+                               <p className="text-sm text-gray-500 dark:text-gray-400">Enter a topic below to generate a lesson plan.</p>
+                               <input 
+                                 type="text" 
+                                 value={aiTopic}
+                                 onChange={(e) => setAiTopic(e.target.value)}
+                                 placeholder="e.g. Introduction to Python..." 
+                                 className="w-full px-4 py-3 rounded-xl border dark:border-slate-600 dark:bg-slate-700"
+                               />
+                               <Button variant="ai" className="w-full justify-center py-4" onClick={handleGenerateLesson} loading={aiLoading} disabled={!aiTopic}>
+                                 {aiLoading ? "Designing..." : "Generate ✨"}
+                               </Button>
+                             </div>
+                           ) : (
+                             <div className="space-y-6 overflow-y-auto">
+                                <div className="bg-gray-50 dark:bg-slate-700/50 p-6 rounded-xl text-sm text-gray-800 dark:text-gray-200 whitespace-pre-wrap">
+                                  {aiResult}
+                                </div>
+                                <div className="flex gap-3">
+                                  <Button variant="outline" className="flex-1" onClick={() => setAiResult("")}>Start Over</Button>
+                                  <Button variant="primary" className="flex-1" onClick={handlePlayLesson} loading={ttsLoading} icon={Volume2}>
+                                    {ttsLoading ? "Generating..." : "Listen"}
+                                  </Button>
+                                </div>
+                             </div>
+                           )}
+                      </div>
+                    </div>
+                 )}
+              </div>
+              
+                {/* Footer - Hide in Classroom */}
                 {page !== 'classroom' && (
                 <footer className="bg-gray-900 text-gray-300 py-12 border-t border-gray-800">
                   <div className="max-w-7xl mx-auto px-4 grid md:grid-cols-4 gap-8">
                     <div>
                       <div className="flex items-center gap-2 mb-4 text-white">
-                        <img 
-                       src="https://raw.githubusercontent.com/FalconFo/ExchangeU/98e1c054db4b08203f6525bd639711fb16822968/logoIMG.png" 
-                       alt="ExchangeU" 
-                       className="w-8 h-8 rounded-lg object-contain" 
-/>
+                        <img src="https://raw.githubusercontent.com/FalconFo/ExchangeU/98e1c054db4b08203f6525bd639711fb16822968/logoIMG.png" alt="ExchangeU" className="w-8 h-8 rounded-lg object-contain" />
                         <span className="text-xl font-bold">Exchange<span className="text-yellow-500">U</span></span>
                       </div>
                       <p className="text-sm text-gray-400">Empowering the world to share knowledge freely. The currency of the future is skill.</p>
@@ -3626,54 +3338,6 @@ const PaymentGateway = ({ isOpen, onClose, data, onSuccess }) => {
                 </footer>
                 )}
 
-                {/* Modals */}
-                 {/* Booking Modal (Upgraded) */}
-                 <BookingModal 
-                    isOpen={bookingModalOpen} 
-                    onClose={() => setBookingModalOpen(false)} 
-                    teacher={selectedTeacher} 
-                    onConfirm={(slot) => handleBookSession(slot)} 
-                />
-                
-                 {/* AI Modal */}
-                 {aiModalOpen && (
-                    <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/60 backdrop-blur-sm">
-                      <div className="bg-white dark:bg-slate-800 rounded-2xl w-full max-w-lg shadow-2xl p-6 max-h-[90vh] flex flex-col">
-                        <div className="flex justify-between items-center mb-4">
-                            <h3 className="text-xl font-bold dark:text-white">AI Lesson Architect</h3>
-                            <button onClick={() => { setAiModalOpen(false); setAiResult(""); setAiTopic(""); }}><XIcon/></button>
-                        </div>
-                         {!aiResult ? (
-                             <div className="space-y-6">
-                               <p className="text-sm text-gray-500 dark:text-gray-400">Enter a topic below to generate a lesson plan.</p>
-                               <input 
-                                 type="text" 
-                                 value={aiTopic}
-                                 onChange={(e) => setAiTopic(e.target.value)}
-                                 placeholder="e.g. Introduction to Python..." 
-                                 className="w-full px-4 py-3 rounded-xl border dark:border-slate-600 dark:bg-slate-700"
-                               />
-                               <Button variant="ai" className="w-full justify-center py-4" onClick={handleGenerateLesson} loading={aiLoading} disabled={!aiTopic}>
-                                 {aiLoading ? "Designing..." : "Generate ✨"}
-                               </Button>
-                             </div>
-                           ) : (
-                             <div className="space-y-6 overflow-y-auto">
-                                <div className="bg-gray-50 dark:bg-slate-700/50 p-6 rounded-xl text-sm text-gray-800 dark:text-gray-200 whitespace-pre-wrap">
-                                  {aiResult}
-                                </div>
-                                <div className="flex gap-3">
-                                  <Button variant="outline" className="flex-1" onClick={() => setAiResult("")}>Start Over</Button>
-                                  <Button variant="primary" className="flex-1" onClick={handlePlayLesson} loading={ttsLoading} icon={Volume2}>
-                                    {ttsLoading ? "Generating..." : "Listen"}
-                                  </Button>
-                                </div>
-                             </div>
-                           )}
-                      </div>
-                    </div>
-                 )}
-              </div>
             </div>
           );
         }
